@@ -1,0 +1,50 @@
+/* ============================================
+   PROJ.IO — TYPOGRAPHY
+   Google Fonts: Patrick Hand, Inter, Caveat
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Patrick+Hand&display=swap');
+
+/* Font family tokens */
+:root {
+  --font-heading: 'Patrick Hand', cursive;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-handwritten: 'Caveat', cursive;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+/* Base typography */
+body {
+  font-family: var(--font-body);
+  font-size: 0.9375rem; /* 15px */
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+h1 { font-size: 2rem; }
+h2 { font-size: 1.5rem; }
+h3 { font-size: 1.25rem; }
+h4 { font-size: 1.125rem; }
+
+/* Labels and caps */
+.label, .caps {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Handwritten / Notes text */
+.handwritten {
+  font-family: var(--font-handwritten);
+  font-size: 1.125rem;
+  line-height: 1.5;
+}

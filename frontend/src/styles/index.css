@@ -1,0 +1,194 @@
+/* ============================================
+   PROJ.IO — DESIGN TOKENS
+   Light & Dark theme custom properties
+   ============================================ */
+
+@import './reset.css';
+@import './typography.css';
+
+/* ─── Light Theme (Default) ─── */
+:root {
+  /* Backgrounds */
+  --bg-primary: #FDF6E3;
+  --bg-secondary: #FAF0D7;
+  --bg-card: #FFFEF9;
+  --bg-input: #FFFFFF;
+  --bg-overlay: rgba(45, 42, 38, 0.4);
+
+  /* Accent */
+  --accent-primary: #F5C542;
+  --accent-secondary: #E8A317;
+  --accent-tertiary: #FFF3C4;
+  --accent-gradient: linear-gradient(135deg, #F5C542 0%, #E8A317 100%);
+
+  /* Text */
+  --text-primary: #2D2A26;
+  --text-secondary: #6B6560;
+  --text-tertiary: #9C9590;
+  --text-inverse: #FFFFFF;
+
+  /* Borders */
+  --border: #E8DCC8;
+  --border-dashed: #D4C5A9;
+  --border-focus: #F5C542;
+
+  /* Shadows */
+  --shadow-card: 0 2px 8px rgba(45, 42, 38, 0.08);
+  --shadow-card-hover: 0 4px 16px rgba(45, 42, 38, 0.12);
+  --shadow-modal: 0 8px 32px rgba(45, 42, 38, 0.16);
+  --shadow-sidebar: 2px 0 8px rgba(45, 42, 38, 0.06);
+
+  /* Status colors */
+  --status-todo: #A0AEC0;
+  --status-todo-bg: #EDF2F7;
+  --status-progress: #4299E1;
+  --status-progress-bg: #EBF8FF;
+  --status-done: #48BB78;
+  --status-done-bg: #F0FFF4;
+
+  /* Project status */
+  --status-planned: #A0AEC0;
+  --status-planned-bg: #EDF2F7;
+
+  /* Priority colors */
+  --priority-low: #68D391;
+  --priority-low-bg: #F0FFF4;
+  --priority-medium: #F6AD55;
+  --priority-medium-bg: #FFFAF0;
+  --priority-high: #FC8181;
+  --priority-high-bg: #FFF5F5;
+
+  /* Semantic */
+  --danger: #E53E3E;
+  --danger-bg: #FFF5F5;
+  --success: #48BB78;
+  --success-bg: #F0FFF4;
+  --warning: #F6AD55;
+  --warning-bg: #FFFAF0;
+  --info: #4299E1;
+  --info-bg: #EBF8FF;
+
+  /* Spacing */
+  --sidebar-width: 260px;
+  --topbar-height: 64px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 400ms ease;
+
+  /* Dot grid background */
+  --dot-color: rgba(45, 42, 38, 0.06);
+  --dot-size: 1px;
+  --dot-spacing: 24px;
+
+  /* Sticky note colors */
+  --sticky-yellow: #FFF9C4;
+  --sticky-pink: #FCE4EC;
+  --sticky-blue: #E3F2FD;
+  --sticky-green: #E8F5E9;
+  --sticky-orange: #FFF3E0;
+  --sticky-purple: #F3E5F5;
+}
+
+/* ─── Dark Theme ─── */
+[data-theme="dark"] {
+  /* Backgrounds */
+  --bg-primary: #1A1814;
+  --bg-secondary: #23201B;
+  --bg-card: #2D2A25;
+  --bg-input: #353230;
+  --bg-overlay: rgba(0, 0, 0, 0.6);
+
+  /* Accent */
+  --accent-primary: #F5C542;
+  --accent-secondary: #D4A832;
+  --accent-tertiary: #3D3520;
+
+  /* Text */
+  --text-primary: #F0EDE8;
+  --text-secondary: #A8A39C;
+  --text-tertiary: #706B64;
+  --text-inverse: #1A1814;
+
+  /* Borders */
+  --border: #3D3832;
+  --border-dashed: #4A443C;
+  --border-focus: #F5C542;
+
+  /* Shadows */
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-card-hover: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-modal: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --shadow-sidebar: 2px 0 8px rgba(0, 0, 0, 0.3);
+
+  /* Status (keep same colors for consistency) */
+  --status-todo-bg: rgba(160, 174, 192, 0.15);
+  --status-progress-bg: rgba(66, 153, 225, 0.15);
+  --status-done-bg: rgba(72, 187, 120, 0.15);
+  --status-planned-bg: rgba(160, 174, 192, 0.15);
+
+  /* Priority */
+  --priority-low-bg: rgba(104, 211, 145, 0.15);
+  --priority-medium-bg: rgba(246, 173, 85, 0.15);
+  --priority-high-bg: rgba(252, 129, 129, 0.15);
+
+  /* Semantic */
+  --danger-bg: rgba(229, 62, 62, 0.15);
+  --success-bg: rgba(72, 187, 120, 0.15);
+  --warning-bg: rgba(246, 173, 85, 0.15);
+  --info-bg: rgba(66, 153, 225, 0.15);
+
+  /* Dot grid */
+  --dot-color: rgba(240, 237, 232, 0.04);
+
+  /* Sticky notes (darker variants) */
+  --sticky-yellow: #3D3520;
+  --sticky-pink: #3D2028;
+  --sticky-blue: #1C2D3D;
+  --sticky-green: #1C3D20;
+  --sticky-orange: #3D2D1C;
+  --sticky-purple: #2D1C3D;
+}
+
+/* ─── Global Body Styles ─── */
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color var(--transition-base), color var(--transition-base);
+}
+
+/* ─── Dot Grid Background ─── */
+.dot-grid {
+  background-image: radial-gradient(var(--dot-color) var(--dot-size), transparent var(--dot-size));
+  background-size: var(--dot-spacing) var(--dot-spacing);
+}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}
+
+/* ─── Selection ─── */
+::selection {
+  background: var(--accent-tertiary);
+  color: var(--text-primary);
+}

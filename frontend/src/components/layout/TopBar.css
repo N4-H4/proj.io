@@ -1,0 +1,46 @@
+/* ============================================
+   TOPBAR STYLES
+   ============================================ */
+
+.topbar {
+  position: fixed;
+  top: 0;
+  left: var(--sidebar-width);
+  right: 0;
+  height: var(--topbar-height);
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 2rem;
+  z-index: 50;
+  transition: background-color var(--transition-base);
+}
+
+.topbar-title {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  color: var(--text-primary);
+}
+
+.topbar-menu-btn {
+  display: none;
+  font-size: 1.5rem;
+  margin-right: 1rem;
+  color: var(--text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+}
+
+@media (max-width: 768px) {
+  .topbar {
+    left: 0;
+    padding: 0 1rem;
+  }
+
+  .topbar-menu-btn {
+    display: block;
+  }
+}

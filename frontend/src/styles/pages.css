@@ -1,0 +1,319 @@
+/* ============================================
+   PROJ.IO — PAGE STYLES
+   Layout rules for specific pages
+   ============================================ */
+
+/* ─── Auth Pages ─── */
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background-image: radial-gradient(var(--dot-color) var(--dot-size), transparent var(--dot-size));
+  background-size: var(--dot-spacing) var(--dot-spacing);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 2.5rem;
+  box-shadow: var(--shadow-modal);
+  animation: fadeInUp var(--transition-slow) ease;
+}
+
+.auth-logo {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.auth-logo h1 {
+  font-family: var(--font-heading);
+  font-size: 2.5rem;
+  color: var(--accent-primary);
+}
+
+.auth-logo p {
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  margin-top: 0.25rem;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.auth-form .btn-primary {
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+}
+
+.auth-footer {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.auth-footer a {
+  color: var(--accent-primary);
+  font-weight: 500;
+}
+
+.auth-footer a:hover {
+  text-decoration: underline;
+}
+
+/* ─── App Layout ─── */
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.app-content {
+  flex: 1;
+  margin-left: var(--sidebar-width);
+  padding: 2rem;
+  padding-top: calc(var(--topbar-height) + 2rem);
+  min-height: 100vh;
+  background-image: radial-gradient(var(--dot-color) var(--dot-size), transparent var(--dot-size));
+  background-size: var(--dot-spacing) var(--dot-spacing);
+}
+
+/* ─── Dashboard ─── */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  padding: 1.25rem;
+  text-align: center;
+}
+
+.stat-card .stat-value {
+  font-family: var(--font-heading);
+  font-size: 2.5rem;
+  color: var(--accent-primary);
+  line-height: 1;
+}
+
+.stat-card .stat-label {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  margin-top: 0.25rem;
+}
+
+/* ─── Projects Grid ─── */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.25rem;
+}
+
+.project-card {
+  cursor: pointer;
+}
+
+.project-card .project-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+
+.project-card .project-card-title {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  color: var(--text-primary);
+}
+
+.project-card .project-card-desc {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.project-card .project-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.75rem;
+  border-top: 1px dashed var(--border-dashed);
+}
+
+.project-card .progress-bar {
+  flex: 1;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-right: 0.75rem;
+}
+
+.project-card .progress-fill {
+  height: 100%;
+  background: var(--accent-gradient);
+  border-radius: 2px;
+  transition: width var(--transition-base);
+}
+
+/* ─── Task List ─── */
+.task-list-section {
+  margin-bottom: 1.5rem;
+}
+
+.task-list-section h3 {
+  font-family: var(--font-heading);
+  font-size: 1.125rem;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.task-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  margin-bottom: 0.5rem;
+  transition: all var(--transition-fast);
+}
+
+.task-item:hover {
+  border-color: var(--accent-primary);
+  box-shadow: var(--shadow-card);
+}
+
+.task-checkbox {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border-dashed);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.task-checkbox.checked {
+  background: var(--status-done);
+  border-color: var(--status-done);
+  color: white;
+}
+
+.task-item .task-title {
+  flex: 1;
+  font-size: 0.9375rem;
+}
+
+.task-item .task-title.completed {
+  text-decoration: line-through;
+  color: var(--text-tertiary);
+}
+
+/* ─── Brain Dump ─── */
+.notes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.note-card {
+  padding: 1.25rem;
+  border-radius: var(--radius-md);
+  position: relative;
+  transition: all var(--transition-base);
+}
+
+.note-card:nth-child(6n+1) { background: var(--sticky-yellow); }
+.note-card:nth-child(6n+2) { background: var(--sticky-pink); }
+.note-card:nth-child(6n+3) { background: var(--sticky-blue); }
+.note-card:nth-child(6n+4) { background: var(--sticky-green); }
+.note-card:nth-child(6n+5) { background: var(--sticky-orange); }
+.note-card:nth-child(6n+6) { background: var(--sticky-purple); }
+
+.note-card:hover {
+  transform: rotate(-1deg) translateY(-2px);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.note-card .note-content {
+  font-family: var(--font-handwritten);
+  font-size: 1.125rem;
+  line-height: 1.5;
+  color: var(--text-primary);
+  word-break: break-word;
+}
+
+.note-card .note-meta {
+  margin-top: 0.75rem;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ─── Page Headers ─── */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.page-header h1 {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 768px) {
+  .app-content {
+    margin-left: 0;
+    padding: 1rem;
+    padding-top: calc(var(--topbar-height) + 1rem);
+  }
+
+  .projects-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .notes-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-card {
+    padding: 1.5rem;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+}
