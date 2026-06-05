@@ -19,12 +19,14 @@ public class ProjectResponse {
     private Long id;
     private String title;
     private String description;
+    private String domain;
     private ProjectStatus status;
     private LocalDate startDate;
     private LocalDate deadline;
     private Boolean archived;
     private int taskCount;
     private int completedTaskCount;
+    private int progress;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -35,17 +37,20 @@ public class ProjectResponse {
                     .filter(t -> t.getStatus() == io.proj.projio.enums.TaskStatus.DONE)
                     .count()
                 : 0;
+        int progressPct = totalTasks > 0 ? (int) Math.round((doneTasks * 100.0) / totalTasks) : 0;
 
         return ProjectResponse.builder()
                 .id(project.getId())
                 .title(project.getTitle())
                 .description(project.getDescription())
+                .domain(project.getDomain())
                 .status(project.getStatus())
                 .startDate(project.getStartDate())
                 .deadline(project.getDeadline())
                 .archived(project.getArchived())
                 .taskCount(totalTasks)
                 .completedTaskCount(doneTasks)
+                .progress(progressPct)
                 .createdAt(project.getCreatedAt())
                 .updatedAt(project.getUpdatedAt())
                 .build();

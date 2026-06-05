@@ -37,6 +37,9 @@ public class Project {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    @Column(length = 100)
+    private String domain;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @Builder.Default
@@ -67,4 +70,8 @@ public class Project {
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     @Builder.Default
     private List<BrainDumpNote> brainDumpNotes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<WorkflowPhase> workflowPhases = new ArrayList<>();
 }

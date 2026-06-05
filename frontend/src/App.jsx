@@ -8,8 +8,6 @@ import SignupPage from './pages/SignupPage';
 import DashboardPage from './pages/DashboardPage';
 import ProjectsPage from './pages/ProjectsPage';
 import ProjectDetailPage from './pages/ProjectDetailPage';
-import TasksPage from './pages/TasksPage';
-import BrainDumpPage from './pages/BrainDumpPage';
 import DeadlinesPage from './pages/DeadlinesPage';
 import SettingsPage from './pages/SettingsPage';
 import NotFoundPage from './pages/NotFoundPage';
@@ -65,8 +63,6 @@ export default function App() {
         <Route path={ROUTES.DASHBOARD} element={<DashboardPage />} />
         <Route path={ROUTES.PROJECTS} element={<ProjectsPage />} />
         <Route path={ROUTES.PROJECT_DETAIL} element={<ProjectDetailPage />} />
-        <Route path={ROUTES.TASKS} element={<TasksPage />} />
-        <Route path={ROUTES.BRAIN_DUMP} element={<BrainDumpPage />} />
         <Route path={ROUTES.DEADLINES} element={<DeadlinesPage />} />
         <Route path={ROUTES.SETTINGS} element={<SettingsPage />} />
       </Route>

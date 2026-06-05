@@ -35,5 +35,6 @@ public class DashboardStatsResponse {
         private LocalDate deadline;
         private String projectTitle;
         private long daysRemaining;
+        private String status;
     }
 }

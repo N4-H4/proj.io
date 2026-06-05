@@ -3,9 +3,12 @@ package io.proj.projio.service;
 import io.proj.projio.dto.request.ProjectRequest;
 import io.proj.projio.dto.response.ProjectResponse;
 import io.proj.projio.entity.Project;
+import io.proj.projio.entity.WorkflowPhase;
 import io.proj.projio.enums.ProjectStatus;
+import io.proj.projio.enums.WorkflowStatus;
 import io.proj.projio.exception.ResourceNotFoundException;
 import io.proj.projio.repository.ProjectRepository;
+import io.proj.projio.repository.WorkflowPhaseRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +21,20 @@ import java.util.stream.Collectors;
 public class ProjectService {
 
     private final ProjectRepository projectRepository;
+    private final WorkflowPhaseRepository workflowPhaseRepository;
     private final UserService userService;
+
+    // Default SDLC phases created with every new project
+    private static final String[][] DEFAULT_PHASES = {
+            {"Requirement Gathering", "Define project scope, user needs, and functional requirements."},
+            {"Feasibility Study", "Assess technical, financial, and operational feasibility."},
+            {"System Analysis", "Analyze system requirements and define specifications."},
+            {"Software Design", "Create architecture, UI/UX mockups, and database schema."},
+            {"Implementation / Coding", "Write code, build features, and integrate components."},
+            {"Testing", "Perform unit, integration, and user acceptance testing."},
+            {"Integration", "Combine modules, connect APIs, and validate end-to-end flow."},
+            {"Deployment & Maintenance", "Deploy to production, monitor, and maintain the application."},
+    };
 
     public List<ProjectResponse> getAllProjects(ProjectStatus status, Boolean archived) {
         Long userId = userService.getCurrentUserId();
@@ -46,12 +62,27 @@ public class ProjectService {
                 .user(userService.getCurrentUser())
                 .title(request.getTitle())
                 .description(request.getDescription())
+                .domain(request.getDomain())
                 .status(request.getStatus() != null ? request.getStatus() : ProjectStatus.PLANNED)
                 .startDate(request.getStartDate())
                 .deadline(request.getDeadline())
                 .build();
 
-        return ProjectResponse.from(projectRepository.save(project));
+        Project savedProject = projectRepository.save(project);
+
+        // Auto-create the 8 SDLC workflow phases
+        for (int i = 0; i < DEFAULT_PHASES.length; i++) {
+            WorkflowPhase phase = WorkflowPhase.builder()
+                    .project(savedProject)
+                    .name(DEFAULT_PHASES[i][0])
+                    .description(DEFAULT_PHASES[i][1])
+                    .status(WorkflowStatus.NOT_STARTED)
+                    .phaseOrder(i)
+                    .build();
+            workflowPhaseRepository.save(phase);
+        }
+
+        return ProjectResponse.from(savedProject);
     }
 
     @Transactional
@@ -60,6 +91,7 @@ public class ProjectService {
 
         project.setTitle(request.getTitle());
         project.setDescription(request.getDescription());
+        project.setDomain(request.getDomain());
         if (request.getStatus() != null) {
             project.setStatus(request.getStatus());
         }
@@ -82,7 +114,7 @@ public class ProjectService {
         return ProjectResponse.from(projectRepository.save(project));
     }
 
-    private Project findProjectByIdAndUser(Long id) {
+    public Project findProjectByIdAndUser(Long id) {
         Long userId = userService.getCurrentUserId();
         return projectRepository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Project", "id", id));

@@ -20,6 +20,8 @@ public class ProjectRequest {
 
     private String description;
 
+    private String domain;
+
     private ProjectStatus status;
 
     private LocalDate startDate;

@@ -1,12 +1,10 @@
-// API route constants
+// Frontend route constants
 export const ROUTES = {
   LOGIN: '/login',
   SIGNUP: '/signup',
   DASHBOARD: '/',
   PROJECTS: '/projects',
   PROJECT_DETAIL: '/projects/:id',
-  TASKS: '/tasks',
-  BRAIN_DUMP: '/brain-dump',
   DEADLINES: '/deadlines',
   SETTINGS: '/settings',
 };
@@ -30,6 +28,12 @@ export const TASK_PRIORITY_LABELS = {
   HIGH: 'High',
 };
 
+export const WORKFLOW_STATUS_LABELS = {
+  NOT_STARTED: 'Not Started',
+  IN_PROGRESS: 'In Progress',
+  COMPLETED: 'Completed',
+};
+
 // Badge CSS class mapping
 export const STATUS_BADGE_CLASS = {
   TODO: 'badge-todo',
@@ -44,6 +48,17 @@ export const PRIORITY_BADGE_CLASS = {
   MEDIUM: 'badge-medium',
   HIGH: 'badge-high',
 };
+
+// Domain options for project creation
+export const DOMAIN_OPTIONS = [
+  'Web Development',
+  'App Development',
+  'Backend',
+  'Full Stack',
+  'AI / ML',
+  'Data Science',
+  'Other',
+];
 
 // API endpoints
 export const API = {

@@ -28,7 +28,8 @@
 }
 
 .sidebar-logo-icon {
-  font-size: 1.75rem;
+  color: var(--accent-primary);
+  flex-shrink: 0;
 }
 
 .sidebar-logo-text {
@@ -81,10 +82,12 @@
 }
 
 .sidebar-link-icon {
-  font-size: 1.125rem;
   flex-shrink: 0;
   width: 24px;
-  text-align: center;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .sidebar-link-label {
@@ -106,6 +109,27 @@
 .sidebar-theme-label {
   font-size: 0.875rem;
   color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Animated theme icon */
+.theme-icon-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.3s ease;
+}
+
+.theme-icon-light {
+  color: var(--accent-secondary);
+  transform: rotate(0deg);
+}
+
+.theme-icon-dark {
+  color: var(--accent-primary);
+  transform: rotate(-20deg);
 }
 
 .theme-switch {
@@ -132,12 +156,21 @@
   height: 20px;
   background: white;
   border-radius: 50%;
-  transition: transform var(--transition-fast);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .theme-switch-on .theme-switch-thumb {
   transform: translateX(20px);
+}
+
+.theme-switch:active .theme-switch-thumb {
+  width: 24px;
+}
+
+.theme-switch-on:active .theme-switch-thumb {
+  transform: translateX(16px);
+  width: 24px;
 }
 
 /* Overlay for mobile */

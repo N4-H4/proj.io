@@ -6,8 +6,6 @@ import TopBar from './TopBar';
 const PAGE_TITLES = {
   '/': 'Dashboard',
   '/projects': 'Projects',
-  '/tasks': 'Tasks',
-  '/brain-dump': 'Brain Dump',
   '/deadlines': 'Deadlines',
   '/settings': 'Settings',
 };

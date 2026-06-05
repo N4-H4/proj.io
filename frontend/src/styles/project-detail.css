@@ -1,0 +1,355 @@
+/* ============================================
+   PROJ.IO — PROJECT DETAIL STYLES
+   Tabs, workflow timeline, project overview
+   ============================================ */
+
+/* ─── Project Detail Header ─── */
+.project-detail-header {
+  margin-bottom: 1.5rem;
+}
+
+.project-detail-header .btn-ghost {
+  margin-bottom: 0.75rem;
+}
+
+.project-detail-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.project-detail-title-row h1 {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+}
+
+/* ─── Tabs ─── */
+.project-tabs {
+  display: flex;
+  gap: 0.25rem;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 1.5rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.project-tab {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  border: none;
+  background: none;
+  cursor: pointer;
+  position: relative;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.project-tab:hover {
+  color: var(--text-primary);
+  background: var(--accent-tertiary);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.project-tab-active {
+  color: var(--accent-primary);
+  font-weight: 600;
+}
+
+.project-tab-active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--accent-primary);
+  border-radius: 2px 2px 0 0;
+}
+
+/* ─── Project Overview ─── */
+.project-overview {
+  animation: fadeInUp 0.3s ease;
+}
+
+.overview-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.overview-item {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+}
+
+.overview-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-tertiary);
+  margin-bottom: 0.375rem;
+}
+
+.overview-value {
+  font-size: 0.9375rem;
+  color: var(--text-primary);
+}
+
+.overview-progress {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.overview-description {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+}
+
+.overview-section-title {
+  font-family: var(--font-heading);
+  font-size: 1.125rem;
+  margin-bottom: 0.5rem;
+}
+
+.overview-description p {
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* ─── Domain Tag ─── */
+.domain-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.625rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: var(--accent-tertiary);
+  color: var(--accent-secondary);
+  border-radius: var(--radius-sm);
+  border: 1px dashed var(--accent-primary);
+}
+
+/* ─── Workflow Timeline ─── */
+.workflow-timeline {
+  animation: fadeInUp 0.3s ease;
+}
+
+.workflow-progress-summary {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.workflow-progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.workflow-progress-label {
+  font-family: var(--font-heading);
+  font-size: 1.125rem;
+}
+
+.workflow-progress-value {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.workflow-progress-bar {
+  height: 8px;
+  border-radius: 4px;
+}
+
+/* ─── Workflow Phases ─── */
+.workflow-phases {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.workflow-phase {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  position: relative;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border-radius: var(--radius-md);
+}
+
+.workflow-phase:hover {
+  background: var(--bg-card);
+}
+
+/* Vertical connector line */
+.workflow-connector {
+  position: absolute;
+  left: calc(1.25rem + 14px);
+  top: calc(1rem + 28px + 4px);
+  bottom: -4px;
+  width: 2px;
+  background: var(--border-dashed);
+  border-left: 2px dashed var(--border-dashed);
+  width: 0;
+}
+
+/* Status dots */
+.workflow-status-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  transition: all var(--transition-fast);
+  margin-top: 2px;
+}
+
+.workflow-dot-not-started {
+  background: var(--bg-secondary);
+  border: 2px dashed var(--border-dashed);
+  color: var(--text-tertiary);
+}
+
+.workflow-dot-in-progress {
+  background: var(--status-progress-bg);
+  border: 2px solid var(--status-progress);
+  color: var(--status-progress);
+}
+
+.workflow-dot-completed {
+  background: var(--status-done);
+  border: 2px solid var(--status-done);
+  color: white;
+}
+
+.workflow-dot-number {
+  font-family: var(--font-body);
+}
+
+/* Phase info */
+.workflow-phase-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.workflow-phase-name {
+  font-family: var(--font-heading);
+  font-size: 1.0625rem;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.workflow-phase-desc {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin-bottom: 0.375rem;
+}
+
+/* Workflow badges */
+.workflow-badge {
+  font-size: 0.625rem;
+}
+
+.workflow-badge-not-started {
+  background: var(--status-todo-bg);
+  color: var(--status-todo);
+}
+
+.workflow-badge-in-progress {
+  background: var(--status-progress-bg);
+  color: var(--status-progress);
+}
+
+.workflow-badge-completed {
+  background: var(--status-done-bg);
+  color: var(--status-done);
+}
+
+/* ─── Brain Dump Section ─── */
+.braindump-section {
+  animation: fadeInUp 0.3s ease;
+}
+
+.braindump-header {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
+.braindump-form {
+  margin-bottom: 1.5rem;
+  padding: 1.25rem;
+}
+
+.braindump-form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.braindump-form-header h3 {
+  font-family: var(--font-heading);
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 768px) {
+  .project-tabs {
+    gap: 0;
+  }
+
+  .project-tab {
+    padding: 0.625rem 0.875rem;
+    font-size: 0.8125rem;
+  }
+
+  .project-tab span:last-child {
+    display: none;
+  }
+
+  .overview-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .overview-actions {
+    flex-wrap: wrap;
+  }
+
+  .workflow-phase {
+    padding: 0.75rem 0.75rem;
+  }
+}

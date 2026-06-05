@@ -14,7 +14,6 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -54,6 +53,7 @@ public class DashboardService {
                     .deadline(p.getDeadline())
                     .projectTitle(p.getTitle())
                     .daysRemaining(ChronoUnit.DAYS.between(today, p.getDeadline()))
+                    .status(p.getStatus().name())
                     .build());
         }
 
@@ -67,6 +67,7 @@ public class DashboardService {
                     .deadline(t.getDueDate())
                     .projectTitle(t.getProject().getTitle())
                     .daysRemaining(ChronoUnit.DAYS.between(today, t.getDueDate()))
+                    .status(t.getStatus().name())
                     .build());
         }
 
@@ -109,6 +110,7 @@ public class DashboardService {
                         .deadline(p.getDeadline())
                         .projectTitle(p.getTitle())
                         .daysRemaining(ChronoUnit.DAYS.between(today, p.getDeadline()))
+                        .status(p.getStatus().name())
                         .build());
             }
         }
@@ -123,6 +125,7 @@ public class DashboardService {
                         .deadline(t.getDueDate())
                         .projectTitle(t.getProject().getTitle())
                         .daysRemaining(ChronoUnit.DAYS.between(today, t.getDueDate()))
+                        .status(t.getStatus().name())
                         .build());
             }
         }
