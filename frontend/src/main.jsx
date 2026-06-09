@@ -7,6 +7,8 @@ import { ThemeProvider } from './context/ThemeContext';
 import './styles/index.css';
 import './styles/components.css';
 import './styles/pages.css';
+import './styles/project-detail.css';
+import './styles/kanban.css';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

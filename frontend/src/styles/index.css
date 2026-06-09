@@ -110,7 +110,7 @@
   --accent-tertiary: #3D3520;
 
   /* Text */
-  --text-primary: #F0EDE8;
+  --text-primary: #FFFFFF;
   --text-secondary: #A8A39C;
   --text-tertiary: #706B64;
   --text-inverse: #1A1814;
@@ -144,7 +144,7 @@
   --info-bg: rgba(66, 153, 225, 0.15);
 
   /* Dot grid */
-  --dot-color: rgba(240, 237, 232, 0.04);
+  --dot-color: rgba(255, 255, 255, 0.015);
 
   /* Sticky notes (darker variants) */
   --sticky-yellow: #3D3520;
@@ -153,6 +153,10 @@
   --sticky-green: #1C3D20;
   --sticky-orange: #3D2D1C;
   --sticky-purple: #2D1C3D;
+}
+
+[data-theme="dark"] .png-icon {
+  filter: brightness(0) invert(0.8);
 }
 
 /* ─── Global Body Styles ─── */

@@ -1,0 +1,514 @@
+/* ============================================
+   PROJ.IO — NOTEBOOK DASHBOARD
+   Handcrafted Digital Notebook layout
+   ============================================ */
+
+.notebook-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Base Card Style (Paper-like) */
+.nb-card {
+  background: var(--bg-card);
+  border: 1px dashed var(--border-dashed);
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.05);
+  position: relative;
+}
+
+.nb-card h1, .nb-card h2, .nb-card h3 {
+  font-family: var(--font-heading);
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.nb-card h2 {
+  font-size: 1.25rem;
+  border-bottom: 2px solid var(--accent-secondary);
+  padding-bottom: 0.25rem;
+  display: inline-block;
+}
+
+/* Accents */
+.nb-pin {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 16px;
+  background: #ff5e5e;
+  border-radius: 50%;
+  box-shadow: inset -2px -2px 4px rgba(0,0,0,0.2), 2px 4px 6px rgba(0,0,0,0.2);
+}
+
+.nb-tape {
+  position: absolute;
+  top: -12px;
+  right: 20px;
+  width: 60px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(2px);
+  transform: rotate(3deg);
+  box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+}
+
+.nb-paperclip {
+  position: absolute;
+  top: -15px;
+  left: 20px;
+  width: 14px;
+  height: 35px;
+  border: 2px solid #888;
+  border-radius: 10px;
+  border-bottom: 0;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  transform: rotate(-5deg);
+}
+
+.nb-handwritten {
+  font-family: var(--font-handwritten);
+  color: var(--text-primary);
+}
+
+.nb-welcome-text {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+/* ROW 1: Welcome + Continue Building */
+.nb-row-1 {
+  display: grid;
+  grid-template-columns: 2fr 3fr;
+  gap: 1.5rem;
+}
+
+.nb-welcome {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.nb-continue-building {
+  background: var(--bg-card);
+  border: 2px solid var(--accent-primary);
+  box-shadow: 4px 6px 15px rgba(0, 0, 0, 0.08);
+}
+
+.nb-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nb-continue-building h3 {
+  font-size: 1.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.nb-progress-wrap {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.nb-progress-bar {
+  flex: 1;
+  height: 8px;
+  background: var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.nb-progress-fill {
+  height: 100%;
+  background: var(--accent-primary);
+  border-radius: 4px;
+}
+
+.nb-progress-text {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.nb-meta {
+  font-size: 0.85rem;
+  color: var(--text-tertiary);
+  margin-bottom: 1.5rem;
+}
+
+/* ROW 2: Workshop Stats */
+.nb-workshop-stats {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 1rem 1.5rem;
+}
+
+.nb-stats-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.nb-stats-title {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+  margin-bottom: 0.5rem;
+}
+
+.nb-stats-numbers {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.nb-stat {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.nb-stat strong {
+  font-size: 1.75rem;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-weight: 600;
+}
+
+.nb-stats-divider {
+  width: 1px;
+  height: 40px;
+  background: var(--border-dashed);
+}
+
+/* ROW 3: Next Up + Deadline Watch */
+.nb-row-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.nb-task-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nb-task-list li {
+  padding: 0.5rem 0;
+  border-bottom: 1px dashed var(--border);
+  display: flex;
+  justify-content: space-between;
+}
+
+.nb-task-list li:last-child {
+  border-bottom: none;
+}
+
+.nb-task-title {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.nb-task-project {
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+  background: var(--bg-hover);
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+}
+
+.nb-deadline-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nb-deadline-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px dashed var(--border);
+}
+
+.nb-deadline-item:last-child {
+  border-bottom: none;
+}
+
+.nb-dl-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.nb-dl-title {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.nb-dl-project {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+}
+
+.nb-dl-time {
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nb-dl-status {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.nb-deadline-item.safe .nb-dl-status { background: var(--success); }
+.nb-deadline-item.urgent .nb-dl-status { background: var(--warning); }
+.nb-deadline-item.overdue .nb-dl-status { background: var(--danger); }
+.nb-deadline-item.overdue .nb-dl-time { color: var(--danger); font-weight: 600; }
+
+/* ROW 4: Project Journal */
+.nb-journal-entries {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+  margin-top: 1rem;
+}
+
+.nb-journal-entry {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.5rem 0.5rem 0.5rem 0;
+  border-bottom: 1px dashed var(--border);
+}
+
+.nb-journal-entry:last-child {
+  border-bottom: none;
+}
+
+.nb-journal-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--bg-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+  font-size: 0.9rem;
+}
+
+.nb-journal-time {
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+
+.nb-journal-content {
+  flex: 1;
+  color: var(--text-secondary);
+}
+
+.nb-journal-content strong {
+  color: var(--text-primary);
+}
+
+/* ROW 5: Workspace Overview */
+.nb-wo-stats-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.nb-wo-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.nb-wo-stat strong {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+}
+
+.nb-wo-stat span {
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+  font-family: var(--font-body);
+}
+
+/* ROW 6: Project Shelf */
+.nb-shelf-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.25rem;
+  padding-top: 0.5rem;
+}
+
+.nb-shelf-card {
+  padding: 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  box-shadow: 2px 4px 8px rgba(0,0,0,0.06);
+  border: 1px solid var(--border);
+  position: relative;
+}
+
+.nb-shelf-card:hover {
+  transform: translateY(-2px) rotate(1deg);
+  box-shadow: 4px 6px 12px rgba(0,0,0,0.1);
+}
+
+.nb-shelf-card:nth-child(4n+1) { background: var(--sticky-yellow); }
+.nb-shelf-card:nth-child(4n+2) { background: var(--sticky-blue); }
+.nb-shelf-card:nth-child(4n+3) { background: var(--sticky-pink); }
+.nb-shelf-card:nth-child(4n+4) { background: var(--sticky-green); }
+
+.nb-shelf-title {
+  font-family: var(--font-body);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+  font-size: 1.05rem;
+}
+
+.nb-shelf-meta {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+}
+
+.nb-shelf-tape {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-2deg);
+  width: 40px;
+  height: 16px;
+  background: rgba(255,255,255,0.4);
+  backdrop-filter: blur(2px);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .nb-row-1, .nb-row-3 {
+    grid-template-columns: 1fr;
+  }
+  .nb-workshop-stats {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .nb-stats-divider {
+    width: 100%;
+    height: 1px;
+  }
+}
+
+/* Tooltip for Recharts */
+.nb-tooltip {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.5rem 0.75rem;
+  box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.1);
+  color: var(--text-primary);
+}
+
+/* Consistency Tracker Heatmap */
+.nb-heatmap-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: flex-end;
+}
+
+.nb-heatmap-grid {
+  display: grid;
+  grid-template-rows: repeat(7, 1fr);
+  grid-auto-flow: column;
+  gap: 4px;
+  width: 100%;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+.nb-heatmap-cell {
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+  background-color: var(--heatmap-0);
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.nb-heatmap-legend {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.nb-heatmap-legend span {
+  margin: 0 4px;
+}
+
+/* Base Light Mode Heatmap Colors (Beige to Warm Gold) */
+:root {
+  --heatmap-0: #F3ECE1;
+  --heatmap-1: #FDE6B1;
+  --heatmap-2: #F6CD68;
+  --heatmap-3: #EBAA1A;
+  --heatmap-4: #C2890D;
+}
+
+/* Dark Mode Heatmap Colors (Charcoal to Warm Amber) */
+[data-theme="dark"] {
+  --heatmap-0: #2A2621;
+  --heatmap-1: #5C4A21;
+  --heatmap-2: #8F6D20;
+  --heatmap-3: #C28E1D;
+  --heatmap-4: #EBB220;
+}
+
+.activity-level-0 { background-color: var(--heatmap-0); }
+.activity-level-1 { background-color: var(--heatmap-1); }
+.activity-level-2 { background-color: var(--heatmap-2); }
+.activity-level-3 { background-color: var(--heatmap-3); }
+.activity-level-4 { background-color: var(--heatmap-4); }
+
+[data-theme="dark"] .nb-heatmap-cell {
+  border: 1px solid rgba(255,255,255,0.05);
+}

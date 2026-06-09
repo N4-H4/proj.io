@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { ROUTES } from '../../utils/constants';
-import { DashboardIcon, ProjectsIcon, DeadlinesIcon, SettingsIcon, LogoutIcon, SunIcon, MoonIcon, NotebookIcon } from '../ui/Icons';
+import { DashboardIcon, ProjectsIcon, DeadlinesIcon, SettingsIcon, LogoutIcon, ThemeIcon, NotebookIcon } from '../ui/Icons';
 import ConfirmModal from '../ui/ConfirmModal';
 import './Sidebar.css';
 
@@ -97,7 +97,7 @@ export default function Sidebar({ isOpen, onClose }) {
         <div className="sidebar-theme-toggle">
           <span className="sidebar-theme-label">
             <span className={`theme-icon-wrapper ${isDark ? 'theme-icon-dark' : 'theme-icon-light'}`}>
-              {isDark ? <MoonIcon size={16} /> : <SunIcon size={16} />}
+              <ThemeIcon size={16} />
             </span>
             {isDark ? 'Dark Mode' : 'Light Mode'}
           </span>
