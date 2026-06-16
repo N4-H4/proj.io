@@ -37,7 +37,7 @@ public class ProjectResponse {
                     .filter(t -> t.getStatus() == io.proj.projio.enums.TaskStatus.DONE)
                     .count()
                 : 0;
-        int progressPct = totalTasks > 0 ? (int) Math.round((doneTasks * 100.0) / totalTasks) : 0;
+        int progressPct = project.getProgress() != null ? project.getProgress() : 0;
 
         return ProjectResponse.builder()
                 .id(project.getId())

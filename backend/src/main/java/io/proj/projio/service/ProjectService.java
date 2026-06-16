@@ -2,11 +2,13 @@ package io.proj.projio.service;
 
 import io.proj.projio.dto.request.ProjectRequest;
 import io.proj.projio.dto.response.ProjectResponse;
+import io.proj.projio.entity.ActivityLog;
 import io.proj.projio.entity.Project;
 import io.proj.projio.entity.WorkflowPhase;
 import io.proj.projio.enums.ProjectStatus;
 import io.proj.projio.enums.WorkflowStatus;
 import io.proj.projio.exception.ResourceNotFoundException;
+import io.proj.projio.repository.ActivityLogRepository;
 import io.proj.projio.repository.ProjectRepository;
 import io.proj.projio.repository.WorkflowPhaseRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
     private final WorkflowPhaseRepository workflowPhaseRepository;
+    private final ActivityLogRepository activityLogRepository;
     private final UserService userService;
 
     // Default SDLC phases created with every new project
@@ -82,6 +85,14 @@ public class ProjectService {
             workflowPhaseRepository.save(phase);
         }
 
+        // Persist initial progress (0% — all phases NOT_STARTED)
+        savedProject.setProgress(0);
+        savedProject = projectRepository.save(savedProject);
+
+        // Log activity
+        logActivity("CREATED_PROJECT", "PROJECT", savedProject.getId(),
+                savedProject.getTitle(), savedProject.getTitle(), savedProject.getId());
+
         return ProjectResponse.from(savedProject);
     }
 
@@ -98,13 +109,25 @@ public class ProjectService {
         project.setStartDate(request.getStartDate());
         project.setDeadline(request.getDeadline());
 
-        return ProjectResponse.from(projectRepository.save(project));
+        Project saved = projectRepository.save(project);
+
+        // Log activity
+        logActivity("UPDATED_PROJECT", "PROJECT", saved.getId(),
+                saved.getTitle(), saved.getTitle(), saved.getId());
+
+        return ProjectResponse.from(saved);
     }
 
     @Transactional
     public void deleteProject(Long id) {
         Project project = findProjectByIdAndUser(id);
+        String title = project.getTitle();
+        Long projectId = project.getId();
         projectRepository.delete(project);
+
+        // Log activity
+        logActivity("DELETED_PROJECT", "PROJECT", projectId,
+                title, title, null);
     }
 
     @Transactional
@@ -118,5 +141,19 @@ public class ProjectService {
         Long userId = userService.getCurrentUserId();
         return projectRepository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Project", "id", id));
+    }
+
+    private void logActivity(String action, String entityType, Long entityId,
+                             String title, String projectTitle, Long projectId) {
+        ActivityLog log = ActivityLog.builder()
+                .user(userService.getCurrentUser())
+                .action(action)
+                .entityType(entityType)
+                .entityId(entityId)
+                .title(title)
+                .projectTitle(projectTitle)
+                .projectId(projectId)
+                .build();
+        activityLogRepository.save(log);
     }
 }

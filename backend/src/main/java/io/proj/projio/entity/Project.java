@@ -55,6 +55,10 @@ public class Project {
     @Builder.Default
     private Boolean archived = false;
 
+    @Column
+    @Builder.Default
+    private Integer progress = 0;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
