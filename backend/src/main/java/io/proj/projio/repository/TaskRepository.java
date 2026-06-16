@@ -37,4 +37,7 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 
     @Query("SELECT COALESCE(MAX(t.position), -1) FROM Task t WHERE t.project.id = :projectId")
     int findMaxPositionByProjectId(@Param("projectId") Long projectId);
+
+    @Query("SELECT COUNT(t) FROM Task t JOIN t.project p WHERE p.user.id = :userId AND t.status = 'DONE' AND t.updatedAt >= :since")
+    long countCompletedByUserSince(@Param("userId") Long userId, @Param("since") java.time.LocalDateTime since);
 }

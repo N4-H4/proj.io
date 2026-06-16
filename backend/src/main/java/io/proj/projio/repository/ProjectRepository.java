@@ -28,4 +28,7 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 
     List<Project> findByUserIdAndDeadlineNotNullAndDeadlineAfterAndArchivedFalseOrderByDeadlineAsc(
             Long userId, LocalDate date);
+
+    Optional<Project> findFirstByUserIdAndStatusAndArchivedFalseOrderByUpdatedAtDesc(
+            Long userId, ProjectStatus status);
 }

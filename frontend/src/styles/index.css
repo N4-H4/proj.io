@@ -20,6 +20,10 @@
   --accent-secondary: #E8A317;
   --accent-tertiary: #FFF3C4;
   --accent-gradient: linear-gradient(135deg, #F5C542 0%, #E8A317 100%);
+  --accent-success: #48BB78;
+  --accent-yellow-muted: #E2C876;
+  --accent-warn-orange: #ED8936;
+  --soft-charcoal: #4A5568;
 
   /* Text */
   --text-primary: #2D2A26;
@@ -108,6 +112,10 @@
   --accent-primary: #F5C542;
   --accent-secondary: #D4A832;
   --accent-tertiary: #3D3520;
+  --accent-success: #48BB78;
+  --accent-yellow-muted: #D4B85E;
+  --accent-warn-orange: #DD6B20;
+  --soft-charcoal: #A0AEC0;
 
   /* Text */
   --text-primary: #FFFFFF;

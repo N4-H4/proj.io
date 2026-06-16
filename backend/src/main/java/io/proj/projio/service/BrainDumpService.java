@@ -2,9 +2,11 @@ package io.proj.projio.service;
 
 import io.proj.projio.dto.request.BrainDumpNoteRequest;
 import io.proj.projio.dto.response.BrainDumpNoteResponse;
+import io.proj.projio.entity.ActivityLog;
 import io.proj.projio.entity.BrainDumpNote;
 import io.proj.projio.entity.Project;
 import io.proj.projio.exception.ResourceNotFoundException;
+import io.proj.projio.repository.ActivityLogRepository;
 import io.proj.projio.repository.BrainDumpNoteRepository;
 import io.proj.projio.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ public class BrainDumpService {
 
     private final BrainDumpNoteRepository noteRepository;
     private final ProjectRepository projectRepository;
+    private final ActivityLogRepository activityLogRepository;
     private final UserService userService;
 
     public List<BrainDumpNoteResponse> getAllNotes(Long projectId) {
@@ -61,7 +64,24 @@ public class BrainDumpService {
                 .content(request.getContent())
                 .build();
 
-        return BrainDumpNoteResponse.from(noteRepository.save(note));
+        BrainDumpNote saved = noteRepository.save(note);
+
+        // Log activity
+        String preview = saved.getContent().length() > 50
+                ? saved.getContent().substring(0, 50) + "..."
+                : saved.getContent();
+        ActivityLog log = ActivityLog.builder()
+                .user(userService.getCurrentUser())
+                .action("CREATED_NOTE")
+                .entityType("NOTE")
+                .entityId(saved.getId())
+                .title(preview)
+                .projectTitle(project != null ? project.getTitle() : null)
+                .projectId(project != null ? project.getId() : null)
+                .build();
+        activityLogRepository.save(log);
+
+        return BrainDumpNoteResponse.from(saved);
     }
 
     @Transactional

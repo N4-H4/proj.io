@@ -2,10 +2,12 @@ package io.proj.projio.service;
 
 import io.proj.projio.dto.request.TaskRequest;
 import io.proj.projio.dto.response.TaskResponse;
+import io.proj.projio.entity.ActivityLog;
 import io.proj.projio.entity.Project;
 import io.proj.projio.entity.Task;
 import io.proj.projio.enums.TaskStatus;
 import io.proj.projio.exception.ResourceNotFoundException;
+import io.proj.projio.repository.ActivityLogRepository;
 import io.proj.projio.repository.ProjectRepository;
 import io.proj.projio.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ public class TaskService {
 
     private final TaskRepository taskRepository;
     private final ProjectRepository projectRepository;
+    private final ActivityLogRepository activityLogRepository;
     private final UserService userService;
 
     public List<TaskResponse> getTasksByProject(Long projectId) {
@@ -65,12 +68,18 @@ public class TaskService {
                 .position(maxPosition + 1)
                 .build();
 
-        return TaskResponse.from(taskRepository.save(task));
+        Task saved = taskRepository.save(task);
+
+        // Log activity
+        logActivity("CREATED_TASK", "TASK", saved.getId(),
+                saved.getTitle(), project.getTitle(), project.getId());
+
+        return TaskResponse.from(saved);
     }
 
     @Transactional
     public TaskResponse updateTask(Long projectId, Long taskId, TaskRequest request) {
-        verifyProjectOwnership(projectId);
+        Project project = verifyProjectOwnership(projectId);
         Task task = taskRepository.findByIdAndProjectId(taskId, projectId)
                 .orElseThrow(() -> new ResourceNotFoundException("Task", "id", taskId));
 
@@ -89,19 +98,34 @@ public class TaskService {
 
     @Transactional
     public TaskResponse updateTaskStatus(Long projectId, Long taskId, TaskStatus status) {
-        verifyProjectOwnership(projectId);
+        Project project = verifyProjectOwnership(projectId);
         Task task = taskRepository.findByIdAndProjectId(taskId, projectId)
                 .orElseThrow(() -> new ResourceNotFoundException("Task", "id", taskId));
+
+        TaskStatus previousStatus = task.getStatus();
         task.setStatus(status);
-        return TaskResponse.from(taskRepository.save(task));
+        Task saved = taskRepository.save(task);
+
+        // Log when task is completed
+        if (status == TaskStatus.DONE && previousStatus != TaskStatus.DONE) {
+            logActivity("COMPLETED_TASK", "TASK", saved.getId(),
+                    saved.getTitle(), project.getTitle(), project.getId());
+        }
+
+        return TaskResponse.from(saved);
     }
 
     @Transactional
     public void deleteTask(Long projectId, Long taskId) {
-        verifyProjectOwnership(projectId);
+        Project project = verifyProjectOwnership(projectId);
         Task task = taskRepository.findByIdAndProjectId(taskId, projectId)
                 .orElseThrow(() -> new ResourceNotFoundException("Task", "id", taskId));
+        String title = task.getTitle();
         taskRepository.delete(task);
+
+        // Log activity
+        logActivity("DELETED_TASK", "TASK", taskId,
+                title, project.getTitle(), project.getId());
     }
 
     @Transactional
@@ -124,5 +148,19 @@ public class TaskService {
         Long userId = userService.getCurrentUserId();
         return projectRepository.findByIdAndUserId(projectId, userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Project", "id", projectId));
+    }
+
+    private void logActivity(String action, String entityType, Long entityId,
+                             String title, String projectTitle, Long projectId) {
+        ActivityLog log = ActivityLog.builder()
+                .user(userService.getCurrentUser())
+                .action(action)
+                .entityType(entityType)
+                .entityId(entityId)
+                .title(title)
+                .projectTitle(projectTitle)
+                .projectId(projectId)
+                .build();
+        activityLogRepository.save(log);
     }
 }

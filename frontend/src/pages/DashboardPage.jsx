@@ -6,7 +6,7 @@ import { projectService } from '../services/projectService';
 import { formatDate, getRelativeTime, isDeadlineUrgent, isDeadlinePassed } from '../utils/dateUtils';
 import { PROJECT_STATUS_LABELS, STATUS_BADGE_CLASS } from '../utils/constants';
 import { WorkshopCharts } from '../components/ui/WorkshopCharts';
-import { ConsistencyTracker } from '../components/ui/ConsistencyTracker';
+import { ContributionCalendar } from '../components/ui/ContributionCalendar';
 import '../styles/dashboard.css';
 
 export default function DashboardPage() {
@@ -274,9 +274,9 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* ROW 6: Consistency Tracker */}
+      {/* ROW 6: Contribution Calendar */}
       <div className="nb-row nb-row-6">
-        <ConsistencyTracker />
+        <ContributionCalendar />
       </div>
 
       {/* ROW 7: Project Shelf */}
