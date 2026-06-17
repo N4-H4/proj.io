@@ -59,14 +59,36 @@ public class ProjectService {
         return ProjectResponse.from(project);
     }
 
+    // ── Safe-default helpers ──────────────────────────────────────────────
+
+    /**
+     * Returns a normalised domain string.
+     * Null / blank → "GENERAL"; otherwise trims and upper-cases the input.
+     */
+    private String parseDomain(String value) {
+        if (value == null || value.isBlank()) {
+            return "GENERAL";
+        }
+        return value.trim().toUpperCase();
+    }
+
+    /**
+     * Returns the given status, or {@link ProjectStatus#PLANNED} when null.
+     */
+    private ProjectStatus safeStatus(ProjectStatus value) {
+        return value != null ? value : ProjectStatus.PLANNED;
+    }
+
+    // ── CREATE ──────────────────────────────────────────────────────────────
+
     @Transactional
     public ProjectResponse createProject(ProjectRequest request) {
         Project project = Project.builder()
                 .user(userService.getCurrentUser())
                 .title(request.getTitle())
                 .description(request.getDescription())
-                .domain(request.getDomain())
-                .status(request.getStatus() != null ? request.getStatus() : ProjectStatus.PLANNED)
+                .domain(parseDomain(request.getDomain()))
+                .status(safeStatus(request.getStatus()))
                 .startDate(request.getStartDate())
                 .deadline(request.getDeadline())
                 .build();
@@ -96,18 +118,41 @@ public class ProjectService {
         return ProjectResponse.from(savedProject);
     }
 
+    // ── UPDATE (strict partial-patch delta) ─────────────────────────────────
+
     @Transactional
     public ProjectResponse updateProject(Long id, ProjectRequest request) {
         Project project = findProjectByIdAndUser(id);
 
-        project.setTitle(request.getTitle());
-        project.setDescription(request.getDescription());
-        project.setDomain(request.getDomain());
+        // Title — only mutate when the request explicitly provides a non-blank value
+        if (request.getTitle() != null && !request.getTitle().isBlank()) {
+            project.setTitle(request.getTitle());
+        }
+
+        // Description — only mutate when explicitly provided (blank is a valid description)
+        if (request.getDescription() != null) {
+            project.setDescription(request.getDescription());
+        }
+
+        // Domain — retain existing value when null/blank; normalise otherwise
+        if (request.getDomain() != null && !request.getDomain().isBlank()) {
+            project.setDomain(parseDomain(request.getDomain()));
+        }
+
+        // Status — retain existing value when null
         if (request.getStatus() != null) {
             project.setStatus(request.getStatus());
         }
-        project.setStartDate(request.getStartDate());
-        project.setDeadline(request.getDeadline());
+
+        // Start date — retain existing value when null
+        if (request.getStartDate() != null) {
+            project.setStartDate(request.getStartDate());
+        }
+
+        // Deadline — retain existing value when null
+        if (request.getDeadline() != null) {
+            project.setDeadline(request.getDeadline());
+        }
 
         Project saved = projectRepository.save(project);
 
