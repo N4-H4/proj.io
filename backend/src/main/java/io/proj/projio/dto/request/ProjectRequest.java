@@ -18,8 +18,10 @@ public class ProjectRequest {
     @Size(max = 200, message = "Title must be at most 200 characters")
     private String title;
 
+    @Size(max = 2000, message = "Description cannot exceed 2000 characters")
     private String description;
 
+    @Size(max = 100, message = "Domain label cannot exceed 100 characters")
     private String domain;
 
     private ProjectStatus status;

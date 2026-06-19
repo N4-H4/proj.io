@@ -21,10 +21,10 @@ public class ProjectController {
     private final ProjectService projectService;
 
     @GetMapping
-    public ResponseEntity<List<ProjectResponse>> getAllProjects(
-            @RequestParam(required = false) ProjectStatus status,
-            @RequestParam(required = false) Boolean archived) {
-        return ResponseEntity.ok(projectService.getAllProjects(status, archived));
+    public ResponseEntity<org.springframework.data.domain.Page<ProjectResponse>> getAllProjects(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(projectService.getAllProjects(page, size));
     }
 
     @GetMapping("/{id}")

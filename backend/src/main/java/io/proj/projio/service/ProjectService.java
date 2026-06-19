@@ -15,6 +15,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,19 +43,11 @@ public class ProjectService {
             {"Deployment & Maintenance", "Deploy to production, monitor, and maintain the application."},
     };
 
-    public List<ProjectResponse> getAllProjects(ProjectStatus status, Boolean archived) {
+    public Page<ProjectResponse> getAllProjects(int page, int size) {
         Long userId = userService.getCurrentUserId();
-        List<Project> projects;
-
-        if (status != null && archived != null) {
-            projects = projectRepository.findByUserIdAndStatusAndArchivedOrderByCreatedAtDesc(userId, status, archived);
-        } else if (archived != null) {
-            projects = projectRepository.findByUserIdAndArchivedOrderByCreatedAtDesc(userId, archived);
-        } else {
-            projects = projectRepository.findByUserIdOrderByCreatedAtDesc(userId);
-        }
-
-        return projects.stream().map(ProjectResponse::from).collect(Collectors.toList());
+        Pageable pageable = PageRequest.of(page, size, org.springframework.data.domain.Sort.by("createdAt").descending());
+        return projectRepository.findByUserId(userId, pageable)
+                .map(ProjectResponse::from);
     }
 
     public ProjectResponse getProject(Long id) {
