@@ -14,39 +14,40 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class TaskController {
 
     private final TaskService taskService;
 
     // Cross-project task listing
-    @GetMapping("/api/v1/tasks")
+    @GetMapping("/tasks")
     public ResponseEntity<List<TaskResponse>> getAllUserTasks(
             @RequestParam(required = false) TaskStatus status) {
         return ResponseEntity.ok(taskService.getAllUserTasks(status));
     }
 
     // Project-scoped task operations
-    @GetMapping("/api/v1/projects/{projectId}/tasks")
+    @GetMapping("/projects/{projectId}/tasks")
     public ResponseEntity<List<TaskResponse>> getTasksByProject(@PathVariable Long projectId) {
         return ResponseEntity.ok(taskService.getTasksByProject(projectId));
     }
 
-    @GetMapping("/api/v1/projects/{projectId}/tasks/{taskId}")
+    @GetMapping("/projects/{projectId}/tasks/{taskId}")
     public ResponseEntity<TaskResponse> getTask(
             @PathVariable Long projectId,
             @PathVariable Long taskId) {
         return ResponseEntity.ok(taskService.getTask(projectId, taskId));
     }
 
-    @PostMapping("/api/v1/projects/{projectId}/tasks")
+    @PostMapping("/projects/{projectId}/tasks")
     public ResponseEntity<TaskResponse> createTask(
             @PathVariable Long projectId,
             @Valid @RequestBody TaskRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(taskService.createTask(projectId, request));
     }
 
-    @PutMapping("/api/v1/projects/{projectId}/tasks/{taskId}")
+    @PutMapping("/projects/{projectId}/tasks/{taskId}")
     public ResponseEntity<TaskResponse> updateTask(
             @PathVariable Long projectId,
             @PathVariable Long taskId,
@@ -54,7 +55,7 @@ public class TaskController {
         return ResponseEntity.ok(taskService.updateTask(projectId, taskId, request));
     }
 
-    @PutMapping("/api/v1/projects/{projectId}/tasks/{taskId}/status")
+    @PutMapping("/projects/{projectId}/tasks/{taskId}/status")
     public ResponseEntity<TaskResponse> updateTaskStatus(
             @PathVariable Long projectId,
             @PathVariable Long taskId,
@@ -63,7 +64,7 @@ public class TaskController {
         return ResponseEntity.ok(taskService.updateTaskStatus(projectId, taskId, status));
     }
 
-    @DeleteMapping("/api/v1/projects/{projectId}/tasks/{taskId}")
+    @DeleteMapping("/projects/{projectId}/tasks/{taskId}")
     public ResponseEntity<Void> deleteTask(
             @PathVariable Long projectId,
             @PathVariable Long taskId) {
@@ -71,7 +72,7 @@ public class TaskController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/api/v1/projects/{projectId}/tasks/reorder")
+    @PutMapping("/projects/{projectId}/tasks/reorder")
     public ResponseEntity<List<TaskResponse>> reorderTasks(
             @PathVariable Long projectId,
             @RequestBody List<Long> taskIds) {

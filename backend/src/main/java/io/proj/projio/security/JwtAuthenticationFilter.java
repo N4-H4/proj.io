@@ -24,20 +24,39 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
+            HttpServletResponse response,
+            FilterChain filterChain) throws ServletException, IOException {
 
         String token = extractTokenFromRequest(request);
 
+        System.out.println("TOKEN: " + token);
+
+        if (StringUtils.hasText(token)) {
+            System.out.println("VALID: " + jwtTokenProvider.validateToken(token));
+        }
+
         if (StringUtils.hasText(token) && jwtTokenProvider.validateToken(token)) {
+
             String email = jwtTokenProvider.getEmailFromToken(token);
+            System.out.println("EMAIL: " + email);
+
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
-            UsernamePasswordAuthenticationToken authenticationToken =
-                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-            authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            System.out.println("USER: " + userDetails.getUsername());
 
-            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                    userDetails,
+                    null,
+                    userDetails.getAuthorities());
+
+            authenticationToken.setDetails(
+                    new WebAuthenticationDetailsSource()
+                            .buildDetails(request));
+
+            SecurityContextHolder.getContext()
+                    .setAuthentication(authenticationToken);
+
+            System.out.println("AUTH SET");
         }
 
         filterChain.doFilter(request, response);
@@ -45,9 +64,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private String extractTokenFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+
+        System.out.println("HEADER: " + bearerToken);
+
+        if (StringUtils.hasText(bearerToken)
+                && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
+
         return null;
     }
 }

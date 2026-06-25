@@ -18,6 +18,14 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 
     List<Task> findByProjectIdAndStatusOrderByPositionAsc(Long projectId, TaskStatus status);
 
+    List<Task> findByProjectId(Long projectId);
+
+    List<Task> findByProjectIdAndStatus(Long projectId, TaskStatus status);
+
+    long countByProjectId(Long projectId);
+
+    long countByProjectIdAndStatus(Long projectId, TaskStatus status);
+
     Optional<Task> findByIdAndProjectId(Long id, Long projectId);
 
     @Query("SELECT t FROM Task t JOIN t.project p WHERE p.user.id = :userId ORDER BY t.dueDate ASC")

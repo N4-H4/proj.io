@@ -11,13 +11,16 @@ import io.proj.projio.repository.ActivityLogRepository;
 import io.proj.projio.repository.ProjectRepository;
 import io.proj.projio.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class TaskService {
 
@@ -79,9 +82,28 @@ public class TaskService {
 
     @Transactional
     public TaskResponse updateTask(Long projectId, Long taskId, TaskRequest request) {
-        Project project = verifyProjectOwnership(projectId);
+        verifyProjectOwnership(projectId);
         Task task = taskRepository.findByIdAndProjectId(taskId, projectId)
                 .orElseThrow(() -> new ResourceNotFoundException("Task", "id", taskId));
+
+        task.setTitle(request.getTitle());
+        task.setDescription(request.getDescription());
+        task.setDueDate(request.getDueDate());
+        if (request.getPriority() != null) {
+            task.setPriority(request.getPriority());
+        }
+        if (request.getStatus() != null) {
+            task.setStatus(request.getStatus());
+        }
+
+        return TaskResponse.from(taskRepository.save(task));
+    }
+
+    @Transactional
+    public TaskResponse updateTask(Long taskId, TaskRequest request) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new ResourceNotFoundException("Task", "id", taskId));
+        verifyProjectOwnership(task.getProject().getId());
 
         task.setTitle(request.getTitle());
         task.setDescription(request.getDescription());
@@ -120,6 +142,19 @@ public class TaskService {
         Project project = verifyProjectOwnership(projectId);
         Task task = taskRepository.findByIdAndProjectId(taskId, projectId)
                 .orElseThrow(() -> new ResourceNotFoundException("Task", "id", taskId));
+        String title = task.getTitle();
+        taskRepository.delete(task);
+
+        // Log activity
+        logActivity("DELETED_TASK", "TASK", taskId,
+                title, project.getTitle(), project.getId());
+    }
+
+    @Transactional
+    public void deleteTask(Long taskId) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new ResourceNotFoundException("Task", "id", taskId));
+        Project project = verifyProjectOwnership(task.getProject().getId());
         String title = task.getTitle();
         taskRepository.delete(task);
 
