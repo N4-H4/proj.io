@@ -4,7 +4,6 @@ import TaskCard from './TaskCard';
 import TaskFormModal from './TaskFormModal';
 import ConfirmModal from '../ui/ConfirmModal';
 import { PlusIcon } from '../ui/Icons';
-import { TASK_STATUS_LABELS } from '../../utils/constants';
 
 const COLUMNS = [
   { key: 'TODO', label: 'To Do', className: 'kanban-col-todo' },
@@ -55,16 +54,35 @@ export default function KanbanBoard({ projectId }) {
   const handleStatusChange = async (task, newStatus) => {
     // Optimistic update
     setTasks((prev) =>
-      prev.map((t) => (t.id === task.id ? { ...t, status: newStatus } : t))
+      prev.map((t) => 
+        (t.id === task.id 
+          ? { ...t, status: newStatus } 
+          : t))
     );
     try {
-      await taskService.updateStatus(projectId, task.id, newStatus);
-    } catch (err) {
-      // Revert
-      setTasks((prev) =>
-        prev.map((t) => (t.id === task.id ? { ...t, status: task.status } : t))
-      );
-    }
+    const updatedTask = await taskService.updateStatus(
+      projectId,
+      task.id,
+      newStatus
+    );
+
+    setTasks((prev) =>
+      prev.map((t) =>
+        t.id === updatedTask.id
+          ? updatedTask
+          : t
+      )
+    );
+  } catch (err) {
+    // Revert
+    setTasks((prev) =>
+      prev.map((t) =>
+        t.id === task.id
+          ? { ...t, status: task.status }
+          : t
+      )
+    );
+  }
   };
 
   const openCreateModal = (status = 'TODO') => {

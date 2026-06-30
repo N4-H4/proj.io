@@ -57,6 +57,9 @@ public class TaskService {
 
     @Transactional
     public TaskResponse createTask(Long projectId, TaskRequest request) {
+        System.out.println("CREATE TASK CALLED");
+        System.out.println(request);
+
         Project project = verifyProjectOwnership(projectId);
 
         int maxPosition = taskRepository.findMaxPositionByProjectId(projectId);
@@ -66,7 +69,8 @@ public class TaskService {
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .dueDate(request.getDueDate())
-                .priority(request.getPriority() != null ? request.getPriority() : io.proj.projio.enums.TaskPriority.MEDIUM)
+                .priority(request.getPriority() != null ? request.getPriority()
+                        : io.proj.projio.enums.TaskPriority.MEDIUM)
                 .status(request.getStatus() != null ? request.getStatus() : TaskStatus.TODO)
                 .position(maxPosition + 1)
                 .build();
@@ -181,12 +185,17 @@ public class TaskService {
 
     private Project verifyProjectOwnership(Long projectId) {
         Long userId = userService.getCurrentUserId();
+
+        System.out.println("PROJECT ID: " + projectId);
+        System.out.println("USER ID: " + userId);
+
         return projectRepository.findByIdAndUserId(projectId, userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Project", "id", projectId));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Project", "id", projectId));
     }
 
     private void logActivity(String action, String entityType, Long entityId,
-                             String title, String projectTitle, Long projectId) {
+            String title, String projectTitle, Long projectId) {
         ActivityLog log = ActivityLog.builder()
                 .user(userService.getCurrentUser())
                 .action(action)

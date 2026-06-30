@@ -17,6 +17,10 @@ import java.util.Map;
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class TaskController {
+    @GetMapping("/test")
+    public String test() {
+        return "TASK CONTROLLER WORKING";
+    }
 
     private final TaskService taskService;
 

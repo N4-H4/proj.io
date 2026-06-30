@@ -1,58 +1,18 @@
-import { useState, useEffect } from 'react';
-import { workflowService } from '../../services/workflowService';
 import { WORKFLOW_STATUS_LABELS } from '../../utils/constants';
 import { CheckIcon, ClockIcon } from '../ui/Icons';
 
 const STATUS_CYCLE = ['NOT_STARTED', 'IN_PROGRESS', 'COMPLETED'];
 
-export default function WorkflowTimeline({ projectId }) {
-  const [phases, setPhases] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    loadPhases();
-  }, [projectId]);
-
-  const loadPhases = async () => {
-    try {
-      const data = await workflowService.getPhases(projectId);
-      setPhases(data);
-    } catch (err) {
-      console.error('Failed to load workflow:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleCycleStatus = async (phase) => {
+export default function WorkflowTimeline({ projectId, phases, onPhaseUpdate, projectProgress }) {
+  const handleCycleStatus = (phase) => {
     const currentIndex = STATUS_CYCLE.indexOf(phase.status);
     const nextStatus = STATUS_CYCLE[(currentIndex + 1) % STATUS_CYCLE.length];
-
-    // Optimistic update
-    setPhases((prev) =>
-      prev.map((p) => (p.id === phase.id ? { ...p, status: nextStatus } : p))
-    );
-
-    try {
-      await workflowService.updatePhaseStatus(projectId, phase.id, { status: nextStatus });
-    } catch (err) {
-      // Revert on failure
-      setPhases((prev) =>
-        prev.map((p) => (p.id === phase.id ? { ...p, status: phase.status } : p))
-      );
-    }
+    
+    onPhaseUpdate(phase.id, nextStatus);
   };
 
-  if (loading) {
-    return (
-      <div className="loader">
-        <div className="loader-spinner" />
-      </div>
-    );
-  }
-
-  const completedCount = phases.filter((p) => p.status === 'COMPLETED').length;
-  const progressPct = phases.length > 0 ? Math.round((completedCount / phases.length) * 100) : 0;
+  const sortedPhases = [...(phases || [])].sort((a, b) => (a.phaseOrder || 0) - (b.phaseOrder || 0));
+  const completedCount = sortedPhases.filter((p) => p.status === 'COMPLETED').length;
 
   return (
     <div className="workflow-timeline">
@@ -60,16 +20,16 @@ export default function WorkflowTimeline({ projectId }) {
       <div className="workflow-progress-summary">
         <div className="workflow-progress-info">
           <span className="workflow-progress-label">Development Progress</span>
-          <span className="workflow-progress-value">{completedCount} / {phases.length} phases</span>
+          <span className="workflow-progress-value">{projectProgress}%</span>
         </div>
         <div className="progress-bar workflow-progress-bar">
-          <div className="progress-fill" style={{ width: `${progressPct}%` }} />
+          <div className="progress-fill" style={{ width: `${projectProgress}%` }} />
         </div>
       </div>
 
       {/* Phase Cards */}
       <div className="workflow-phases">
-        {phases.map((phase, index) => (
+        {sortedPhases.map((phase, index) => (
           <div
             key={phase.id}
             className={`workflow-phase workflow-phase-${phase.status.toLowerCase().replace('_', '-')}`}
@@ -79,7 +39,7 @@ export default function WorkflowTimeline({ projectId }) {
             title={`Click to change status — currently: ${WORKFLOW_STATUS_LABELS[phase.status]}`}
           >
             {/* Connector line */}
-            {index < phases.length - 1 && <div className="workflow-connector" />}
+            {index < sortedPhases.length - 1 && <div className="workflow-connector" />}
 
             {/* Status indicator */}
             <div className={`workflow-status-dot workflow-dot-${phase.status.toLowerCase().replace('_', '-')}`}>

@@ -55,7 +55,7 @@ export default function ProjectOverview({ project, onProjectUpdated }) {
 
         <div className="overview-item">
           <span className="overview-label">Deadline</span>
-          <span className="overview-value">{project.deadline ? formatDate(project.deadline) : 'Not set'}</span>
+          <span className="overview-value">{project.endDate ? formatDate(project.endDate) : 'Not set'}</span>
         </div>
 
         <div className="overview-item">
@@ -92,7 +92,7 @@ export default function ProjectOverview({ project, onProjectUpdated }) {
       <ConfirmModal
         isOpen={showDeleteModal}
         title="Delete Project"
-        message={`Are you sure you want to delete "${project.title}"? This will also delete all tasks, notes, and workflow data. This action cannot be undone.`}
+        message={`Are you sure you want to delete "${project.name}"? This will also delete all tasks, notes, and workflow data. This action cannot be undone.`}
         confirmLabel="Delete"
         onConfirm={handleDelete}
         onCancel={() => setShowDeleteModal(false)}

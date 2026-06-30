@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { projectService } from '../services/projectService';
+import { workflowService } from '../services/workflowService';
 import ProjectOverview from '../components/project/ProjectOverview';
 import WorkflowTimeline from '../components/project/WorkflowTimeline';
 import KanbanBoard from '../components/task/KanbanBoard';
@@ -18,23 +19,38 @@ export default function ProjectDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [project, setProject] = useState(null);
+  const [workflow, setWorkflow] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    loadProject();
+    loadProjectData();
   }, [id]);
 
-  const loadProject = async () => {
+  const loadProjectData = async () => {
     try {
-      const data = await projectService.getById(id);
-      setProject(data);
+      setLoading(true);
+      const [projectData, workflowData] = await Promise.all([
+        projectService.getProjectById(id),
+        workflowService.getWorkflowByProjectId(id)
+      ]);
+      setProject(projectData);
+      setWorkflow(workflowData);
     } catch (err) {
       setError('Project not found');
-      console.error('Failed to load project:', err);
+      console.error('Failed to load project data:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handlePhaseUpdate = async (phaseId, status) => {
+    try {
+      await workflowService.updateWorkflowPhase(id, phaseId, status);
+      await loadProjectData();
+    } catch (err) {
+      console.error('Failed to update phase:', err);
     }
   };
 
@@ -66,7 +82,7 @@ export default function ProjectDetailPage() {
           <ArrowLeftIcon size={16} /> Projects
         </button>
         <div className="project-detail-title-row">
-          <h1>{project.title}</h1>
+          <h1>{project.name}</h1>
           {project.domain && <span className="domain-tag">{project.domain}</span>}
         </div>
       </div>
@@ -95,7 +111,12 @@ export default function ProjectDetailPage() {
           />
         )}
         {activeTab === 'workflow' && (
-          <WorkflowTimeline projectId={project.id} />
+          <WorkflowTimeline 
+            projectId={project.id} 
+            phases={workflow} 
+            onPhaseUpdate={handlePhaseUpdate}
+            projectProgress={project.progress || 0}
+          />
         )}
         {activeTab === 'tasks' && (
           <KanbanBoard projectId={project.id} />

@@ -7,8 +7,8 @@ export const projectService = {
     return response.data;
   },
 
-  async getById(id) {
-    const response = await api.get(`${API.PROJECTS}/${id}`);
+  async getProjectById(projectId) {
+    const response = await api.get(`${API.PROJECTS}/${projectId}`);
     return response.data;
   },
 

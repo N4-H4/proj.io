@@ -17,10 +17,15 @@ export default function ProjectsPage() {
 
   const loadProjects = async () => {
     try {
-      const data = await projectService.getAll({ archived: false });
-      setProjects(data);
+      const data = await projectService.getAll({
+        archived: false,
+        page: 0,
+        size: 10,
+      });
+      setProjects(data.content || []);
     } catch (err) {
       console.error('Failed to load projects:', err);
+      setProjects([]);
     } finally {
       setLoading(false);
     }
@@ -28,7 +33,7 @@ export default function ProjectsPage() {
 
   const handleCreateProject = async (payload) => {
     const newProject = await projectService.create(payload);
-    navigate(`/projects/${newProject.id}`);
+    setProjects(prev => [newProject, ...prev]);
   };
 
   if (loading) {
@@ -43,10 +48,12 @@ export default function ProjectsPage() {
     <div>
       <div className="page-header">
         <h1>Projects</h1>
-        <button className="btn btn-primary" onClick={() => setShowModal(true)} id="new-project-btn">
-          <PlusIcon size={16} />
-          New Project
-        </button>
+        {projects.length > 0 && (
+          <button className="btn btn-primary" onClick={() => setShowModal(true)}>
+            <PlusIcon size={16} />
+            New Project
+          </button>
+        )}
       </div>
 
       {projects.length === 0 ? (
@@ -54,11 +61,11 @@ export default function ProjectsPage() {
           <div className="empty-state-icon">
             <NotebookIcon size={64} />
           </div>
-          <h3>No projects yet</h3>
-          <p>Start by creating your first project. Every great idea begins here!</p>
+          <h3>This place looks empty.</h3>
+          <p>Every great product starts with a single idea.</p>
           <button className="btn btn-primary btn-lg" style={{ marginTop: '1rem' }} onClick={() => setShowModal(true)}>
             <PlusIcon size={18} />
-            Create Project
+            Create Your First Project
           </button>
         </div>
       ) : (
