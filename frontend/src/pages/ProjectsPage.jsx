@@ -22,7 +22,7 @@ export default function ProjectsPage() {
         page: 0,
         size: 10,
       });
-      setProjects(data.content || []);
+      setProjects(data);
     } catch (err) {
       console.error('Failed to load projects:', err);
       setProjects([]);

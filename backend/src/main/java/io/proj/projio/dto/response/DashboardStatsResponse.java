@@ -52,7 +52,6 @@ public class DashboardStatsResponse {
     @AllArgsConstructor
     @Builder
     public static class DeadlineItem {
-        private String type; // "PROJECT" or "TASK"
         private Long id;
         private String title;
         private LocalDate deadline;
@@ -71,8 +70,6 @@ public class DashboardStatsResponse {
         private String domain;
         private String status;
         private int progress;
-        private LocalDate deadline;
-        private Long daysRemaining;
         private LocalDateTime updatedAt;
     }
 

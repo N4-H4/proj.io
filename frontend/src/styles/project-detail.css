@@ -304,26 +304,458 @@
   animation: fadeInUp 0.3s ease;
 }
 
-.braindump-header {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 1rem;
+/* Side-by-side layout: form on left, grid on right */
+.braindump-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 1.5rem;
+  align-items: flex-start;
 }
 
-.braindump-form {
-  margin-bottom: 1.5rem;
+/* ─── Form Panel ─── */
+.braindump-form-panel {
+  position: sticky;
+  top: 1rem;
+  background: var(--bg-card);
   padding: 1.25rem;
 }
 
-.braindump-form-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.75rem;
+.braindump-form-title-row {
+  margin-bottom: 1rem;
 }
 
-.braindump-form-header h3 {
+.braindump-form-label {
   font-family: var(--font-heading);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--accent-secondary);
+  letter-spacing: 0.03em;
+}
+
+.braindump-form-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.braindump-field-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.braindump-field-title {
+  grid-column: 1 / -1;
+}
+
+.braindump-select {
+  cursor: pointer;
+  appearance: auto;
+}
+
+.braindump-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px dashed var(--border-dashed);
+}
+
+/* --- Notes Grid Wrapper --- */
+.notes-grid-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* --- Info Counter --- */
+.notes-info-counter {
+  font-size: 0.8125rem;
+  color: var(--text-tertiary);
+  letter-spacing: 0.01em;
+}
+
+.notes-info-counter strong {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+/* --- Notes Grid --- */
+/* Desktop XL: 5 cols x 4 rows = 20 notes */
+.notes-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+  align-content: start;
+}
+
+/* --- Pagination --- */
+.pagination-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  padding: 0.75rem 0 0.25rem;
+}
+
+.pagination-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  height: 34px;
+  padding: 0 0.5rem;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: color var(--transition-fast), background var(--transition-fast),
+              border-color var(--transition-fast), transform var(--transition-fast);
+  line-height: 1;
+}
+
+.pagination-btn:hover:not(:disabled):not(.pagination-btn-active) {
+  color: var(--text-primary);
+  background: var(--accent-tertiary);
+  border-color: var(--accent-primary);
+  transform: translateY(-1px);
+}
+
+.pagination-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* Active page */
+.pagination-btn-active {
+  background: var(--accent-gradient);
+  color: var(--text-inverse);
+  border-color: transparent;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(245, 197, 66, 0.35);
+  cursor: default;
+}
+
+/* Edge buttons (First / Last) - slightly wider */
+.pagination-btn-edge {
+  font-size: 1rem;
+}
+
+/* Ellipsis separator */
+.pagination-ellipsis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 34px;
+  font-size: 0.875rem;
+  color: var(--text-tertiary);
+  user-select: none;
+}
+
+/* Dark-mode overrides */
+[data-theme="dark"] .pagination-btn {
+  background: var(--bg-secondary);
+  border-color: var(--border);
+  color: var(--text-secondary);
+}
+
+[data-theme="dark"] .pagination-btn:hover:not(:disabled):not(.pagination-btn-active) {
+  background: var(--accent-tertiary);
+  border-color: var(--accent-primary);
+  color: var(--text-primary);
+}
+
+/* ─── Sticky Note Card ─── */
+.note-sticky-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background: #FFFDE7;
+  border: 1px solid #F9E44A;
+  border-radius: var(--radius-lg);
+  padding: 1rem 1.125rem 0.875rem;
+  box-shadow: 2px 3px 8px rgba(45, 42, 38, 0.12), 0 1px 2px rgba(45, 42, 38, 0.06);
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+  animation: fadeInUp 0.3s ease both;
+  font-family: inherit;
+  color: inherit;
+  border-left: 4px solid #F5C542;
+}
+
+.note-sticky-card:hover {
+  transform: translateY(-4px) rotate(0.4deg);
+  box-shadow: 4px 8px 20px rgba(45, 42, 38, 0.18), 0 2px 4px rgba(45, 42, 38, 0.08);
+}
+
+.note-sticky-card:active {
+  transform: translateY(-2px) rotate(0deg);
+}
+
+[data-theme="dark"] .note-sticky-card {
+  background: #2E2B18;
+  border-color: #4A4218;
+  border-left-color: #F5C542;
+}
+
+.note-sticky-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.note-sticky-title {
+  font-family: var(--font-heading);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.35;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  margin: 0;
+}
+
+[data-theme="dark"] .note-sticky-title {
+  color: #EDE9D8;
+}
+
+.note-sticky-body {
+  font-size: 0.8125rem;
+  color: #5C5640;
+  line-height: 1.55;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  flex: 1;
+  margin: 0;
+}
+
+[data-theme="dark"] .note-sticky-body {
+  color: #A09870;
+}
+
+.note-sticky-footer {
+  margin-top: 0.375rem;
+  padding-top: 0.5rem;
+  border-top: 1px dashed rgba(180, 160, 60, 0.3);
+}
+
+.note-sticky-date {
+  font-size: 0.6875rem;
+  color: #8C7C50;
+  font-style: italic;
+}
+
+/* ─── Category Badge ─── */
+.note-category-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.175rem 0.5rem;
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ─── A4 Paper Modal ─── */
+.braindump-modal-overlay {
+  align-items: center;
+}
+
+.braindump-modal-paper {
+  background: #FAFAFA;
+  border-radius: var(--radius-lg);
+  padding: 2.5rem 3rem;
+  width: 100%;
+  max-width: 680px;
+  max-height: 88vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25), 0 4px 12px rgba(0, 0, 0, 0.12);
+  animation: slideUp var(--transition-base) ease;
+  color: #1A1814;
+}
+
+[data-theme="dark"] .braindump-modal-paper {
+  background: #F5F2E8;
+  color: #1A1814;
+}
+
+.braindump-paper-rule {
+  height: 3px;
+  background: linear-gradient(90deg, #F5C542 0%, #E8A317 60%, transparent 100%);
+  border-radius: 2px;
+  margin-bottom: 1.5rem;
+}
+
+.braindump-modal-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.braindump-modal-title {
+  font-family: var(--font-heading);
+  font-size: 1.625rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #1A1814;
+  margin-bottom: 0.5rem;
+}
+
+.braindump-modal-title-input {
+  font-family: var(--font-heading);
+  font-size: 1.375rem;
+  font-weight: 600;
+  color: #1A1814;
+  background: rgba(245, 197, 66, 0.08);
+  border-color: rgba(245, 197, 66, 0.4);
+  margin-bottom: 0.5rem;
+}
+
+.braindump-modal-dates {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: #8C8880;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.braindump-paper-divider {
+  border: none;
+  border-top: 2px solid #E8DCC8;
+  margin-bottom: 1.25rem;
+}
+
+.braindump-modal-category-row {
+  margin-bottom: 0.875rem;
+}
+
+.braindump-modal-category-row .input-label {
+  color: #6B6560;
+}
+
+.braindump-modal-body {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: #2D2A26;
+  white-space: pre-wrap;
+  word-break: break-word;
+  min-height: 6rem;
+}
+
+.braindump-modal-body-input {
+  font-size: 1rem;
+  line-height: 1.8;
+  min-height: 180px;
+  color: #1A1814;
+  background: rgba(245, 197, 66, 0.06);
+  border-color: rgba(245, 197, 66, 0.35);
+  resize: vertical;
+}
+
+.braindump-modal-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin-top: 1.75rem;
+  padding-top: 1rem;
+  border-top: 1px dashed #D4C5A9;
+}
+
+.braindump-modal-actions .btn-danger {
+  margin-left: auto;
+}
+
+/* ─── Empty state (notes-only override) ─── */
+.empty-state-notes-text {
+  color: var(--text-tertiary);
+  font-size: 0.9375rem;
+  font-style: italic;
+  text-align: center;
+  padding: 3rem 1.5rem;
+}
+
+/* Responsive Grid Breakpoints */
+/* lg: 4 cols x 5 rows */
+@media (max-width: 1280px) {
+  .notes-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* md/tablet: 3 cols */
+@media (max-width: 1024px) {
+  .braindump-layout {
+    grid-template-columns: 280px 1fr;
+  }
+
+  .notes-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .braindump-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .braindump-form-panel {
+    position: static;
+  }
+
+  .braindump-form-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .braindump-field-title {
+    grid-column: 1;
+  }
+
+  /* md: 2 cols */
+  .notes-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .braindump-modal-paper {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .braindump-modal-title {
+    font-size: 1.25rem;
+  }
+
+  /* Compact pagination on small screens */
+  .pagination-btn {
+    min-width: 30px;
+    height: 30px;
+    font-size: 0.8125rem;
+  }
+}
+
+/* sm: 1 col */
+@media (max-width: 480px) {
+  .notes-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ─── Responsive ─── */

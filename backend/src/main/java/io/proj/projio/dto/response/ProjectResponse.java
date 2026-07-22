@@ -22,7 +22,6 @@ public class ProjectResponse {
     private String domain;
     private ProjectStatus status;
     private LocalDate startDate;
-    private LocalDate deadline;
     private Boolean archived;
     private int taskCount;
     private int completedTaskCount;
@@ -46,7 +45,6 @@ public class ProjectResponse {
                 .domain(project.getDomain())
                 .status(project.getStatus())
                 .startDate(project.getStartDate())
-                .deadline(project.getDeadline())
                 .archived(project.getArchived())
                 .taskCount(totalTasks)
                 .completedTaskCount(doneTasks)

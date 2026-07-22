@@ -9,6 +9,7 @@ import './styles/components.css';
 import './styles/pages.css';
 import './styles/project-detail.css';
 import './styles/kanban.css';
+import './styles/deadlines.css';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

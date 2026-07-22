@@ -34,6 +34,9 @@ export default function ProjectFormModal({ isOpen, onClose, onSubmit, project = 
 
   if (!isOpen) return null;
 
+  const clearError = (field) =>
+    setFormErrors((prev) => { const next = { ...prev }; delete next[field]; return next; });
+
   const validateForm = () => {
     const errors = {};
     if (!formData.title.trim()) errors.title = "Project title is required";
@@ -91,7 +94,7 @@ export default function ProjectFormModal({ isOpen, onClose, onSubmit, project = 
                     type="text" 
                     className={`input-field ${formErrors.title ? 'input-error' : ''}`}
                     value={formData.title} 
-                    onChange={(e) => setFormData({...formData, title: e.target.value})} 
+                    onChange={(e) => { setFormData({...formData, title: e.target.value}); clearError('title'); }} 
                 />
                 {formErrors.title && <p className="input-error-message">{formErrors.title}</p>}
             </div>
@@ -102,7 +105,7 @@ export default function ProjectFormModal({ isOpen, onClose, onSubmit, project = 
                 <textarea 
                     className={`input-field ${formErrors.description ? 'input-error' : ''}`}
                     value={formData.description} 
-                    onChange={(e) => setFormData({...formData, description: e.target.value})} 
+                    onChange={(e) => { setFormData({...formData, description: e.target.value}); clearError('description'); }} 
                     rows={3}
                 />
                 {formErrors.description && <p className="input-error-message">{formErrors.description}</p>}
@@ -115,7 +118,7 @@ export default function ProjectFormModal({ isOpen, onClose, onSubmit, project = 
                     <select 
                         className={`input-field ${formErrors.domain ? 'input-error' : ''}`}
                         value={formData.domain}
-                        onChange={(e) => setFormData({...formData, domain: e.target.value})}
+                        onChange={(e) => { setFormData({...formData, domain: e.target.value}); clearError('domain'); }}
                     >
                         <option value="">Select Domain</option>
                         <option value="FULL_STACK">Full Stack</option>
@@ -147,7 +150,7 @@ export default function ProjectFormModal({ isOpen, onClose, onSubmit, project = 
                     type="date" 
                     className={`input-field ${formErrors.startDate ? 'input-error' : ''}`}
                     value={formData.startDate} 
-                    onChange={(e) => setFormData({...formData, startDate: e.target.value})} 
+                    onChange={(e) => { setFormData({...formData, startDate: e.target.value}); clearError('startDate'); }} 
                 />
                 {formErrors.startDate && <p className="input-error-message">{formErrors.startDate}</p>}
             </div>

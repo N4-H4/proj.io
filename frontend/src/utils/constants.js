@@ -77,4 +77,5 @@ export const API = {
   BRAIN_DUMP: '/brain-dump',
   DASHBOARD: '/dashboard/stats',
   DEADLINES: '/deadlines',
+  DEADLINE_HISTORY: (id) => `/deadlines/${id}/history`,
 };

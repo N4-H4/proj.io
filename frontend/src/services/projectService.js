@@ -4,7 +4,9 @@ import { API } from '../utils/constants';
 export const projectService = {
   async getAll(params = {}) {
     const response = await api.get(API.PROJECTS, { params });
-    return response.data;
+    // Backend returns a paginated wrapper { content: [...] }; normalise to a plain array.
+    const data = response.data;
+    return Array.isArray(data) ? data : (data?.content ?? []);
   },
 
   async getProjectById(projectId) {

@@ -13,8 +13,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "projects", indexes = {
-        @Index(name = "idx_projects_user_id", columnList = "user_id"),
-        @Index(name = "idx_projects_deadline", columnList = "deadline")
+        @Index(name = "idx_projects_user_id", columnList = "user_id")
 })
 @Getter
 @Setter
@@ -48,8 +47,7 @@ public class Project {
     @Column(name = "start_date")
     private LocalDate startDate;
 
-    @Column
-    private LocalDate deadline;
+
 
     @Column(nullable = false)
     @Builder.Default

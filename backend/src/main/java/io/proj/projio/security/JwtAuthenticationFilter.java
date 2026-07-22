@@ -27,27 +27,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
 
-        String header = request.getHeader("Authorization");
-
-        System.out.println("HEADER: " + header);
-
         String token = extractTokenFromRequest(request);
-
-        System.out.println("TOKEN: " + token);
-
-
-        if (StringUtils.hasText(token)) {
-            System.out.println("VALID: " + jwtTokenProvider.validateToken(token));
-        }
 
         if (StringUtils.hasText(token) && jwtTokenProvider.validateToken(token)) {
 
             String email = jwtTokenProvider.getEmailFromToken(token);
-            System.out.println("EMAIL: " + email);
-
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-
-            System.out.println("USER: " + userDetails.getUsername());
 
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                     userDetails,
@@ -60,8 +45,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             SecurityContextHolder.getContext()
                     .setAuthentication(authenticationToken);
-
-            System.out.println("AUTH SET");
         }
 
         filterChain.doFilter(request, response);
@@ -69,8 +52,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private String extractTokenFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
-
-        System.out.println("HEADER: " + bearerToken);
 
         if (StringUtils.hasText(bearerToken)
                 && bearerToken.startsWith("Bearer ")) {

@@ -86,7 +86,6 @@ public class ProjectService {
                 .domain(parseDomain(request.getDomain()))
                 .status(safeStatus(request.getStatus()))
                 .startDate(request.getStartDate())
-                .deadline(request.getDeadline())
                 .build();
 
         Project savedProject = projectRepository.save(project);
@@ -145,10 +144,6 @@ public class ProjectService {
             project.setStartDate(request.getStartDate());
         }
 
-        // Deadline — retain existing value when null
-        if (request.getDeadline() != null) {
-            project.setDeadline(request.getDeadline());
-        }
 
         Project saved = projectRepository.save(project);
 

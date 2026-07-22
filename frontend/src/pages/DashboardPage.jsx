@@ -27,7 +27,7 @@ export default function DashboardPage() {
         projectService.getAll({ archived: false }),
       ]);
       setStats(statsData);
-      setRecentProjects(projectsData.slice(0, 4));
+      setRecentProjects((projectsData ?? []).slice(0, 4));
     } catch (err) {
       console.error('Failed to load dashboard:', err);
     } finally {
@@ -74,10 +74,10 @@ export default function DashboardPage() {
   ].sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
 
   const mockDeadlines = [
-    { id: 101, type: "PROJECT", title: "Proj.io Beta", daysRemaining: -1, deadline: new Date(Date.now() - 86400000).toISOString() },
-    { id: 102, type: "TASK", title: "Fix login bug", projectTitle: "Proj.io", daysRemaining: 2, deadline: new Date(Date.now() + 86400000 * 2).toISOString() },
-    { id: 103, type: "PROJECT", title: "Portfolio V2", daysRemaining: 5, deadline: new Date(Date.now() + 86400000 * 5).toISOString() },
-    { id: 104, type: "TASK", title: "Write documentation", projectTitle: "Proj.io", daysRemaining: 8, deadline: new Date(Date.now() + 86400000 * 8).toISOString() },
+    { id: 101, title: "Fix login bug", projectTitle: "Proj.io", daysRemaining: -1, deadline: new Date(Date.now() - 86400000).toISOString() },
+    { id: 102, title: "Deploy staging build", projectTitle: "Proj.io", daysRemaining: 2, deadline: new Date(Date.now() + 86400000 * 2).toISOString() },
+    { id: 103, title: "Write API docs", projectTitle: "Portfolio V2", daysRemaining: 5, deadline: new Date(Date.now() + 86400000 * 5).toISOString() },
+    { id: 104, title: "Write documentation", projectTitle: "Proj.io", daysRemaining: 8, deadline: new Date(Date.now() + 86400000 * 8).toISOString() },
   ].sort((a, b) => a.daysRemaining - b.daysRemaining);
 
   const mockJournal = [
@@ -197,11 +197,11 @@ export default function DashboardPage() {
                 const daysRemaining = item.daysRemaining !== undefined ? item.daysRemaining : getDaysRemaining(item.deadline);
                 const statusClass = getUrgencyClass(daysRemaining);
                 return (
-                  <li key={`${item.type || 'MOCK'}-${item.id}`} className={`nb-deadline-item ${statusClass}`}>
+                  <li key={item.id} className={`nb-deadline-item ${statusClass}`}>
                     <div className="nb-dl-info">
                       <span className="nb-dl-title" style={{ fontFamily: 'var(--font-body)' }}>{item.title}</span>
                       <span className="nb-dl-project" style={{ fontFamily: 'var(--font-body)' }}>
-                        {item.type === 'PROJECT' ? 'Project' : `Task in ${item.projectTitle}`}
+                        {item.projectTitle ? `Task in ${item.projectTitle}` : 'Task'}
                       </span>
                     </div>
                     <div className="nb-dl-time" style={{ fontFamily: 'var(--font-body)' }}>

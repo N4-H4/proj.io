@@ -20,7 +20,7 @@ public class DashboardController {
         return ResponseEntity.ok(dashboardService.getStats());
     }
 
-    @GetMapping("/deadlines")
+    @GetMapping("/dashboard/deadlines")
     public ResponseEntity<List<DashboardStatsResponse.DeadlineItem>> getDeadlines(
             @RequestParam(defaultValue = "30") int days) {
         return ResponseEntity.ok(dashboardService.getDeadlines(days));

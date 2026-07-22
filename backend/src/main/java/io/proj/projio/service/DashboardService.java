@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
+
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
@@ -73,18 +73,12 @@ public class DashboardService {
 
             int progress = p.getProgress() != null ? p.getProgress() : 0;
 
-            Long daysRemaining = p.getDeadline() != null
-                    ? ChronoUnit.DAYS.between(today, p.getDeadline())
-                    : null;
-
             continueProject = DashboardStatsResponse.ContinueProjectItem.builder()
                     .id(p.getId())
                     .title(p.getTitle())
                     .domain(p.getDomain())
                     .status(p.getStatus().name())
                     .progress(progress)
-                    .deadline(p.getDeadline())
-                    .daysRemaining(daysRemaining)
                     .updatedAt(p.getUpdatedAt())
                     .build();
         }
@@ -115,26 +109,10 @@ public class DashboardService {
         // ── Deadline Watch ──
         List<DashboardStatsResponse.DeadlineItem> deadlineItems = new ArrayList<>();
 
-        // Project deadlines
-        List<Project> projectDeadlines = projectRepository
-                .findByUserIdAndDeadlineNotNullAndDeadlineAfterAndArchivedFalseOrderByDeadlineAsc(userId, today.minusDays(1));
-        for (Project p : projectDeadlines) {
-            deadlineItems.add(DashboardStatsResponse.DeadlineItem.builder()
-                    .type("PROJECT")
-                    .id(p.getId())
-                    .title(p.getTitle())
-                    .deadline(p.getDeadline())
-                    .projectTitle(p.getTitle())
-                    .daysRemaining(ChronoUnit.DAYS.between(today, p.getDeadline()))
-                    .status(p.getStatus().name())
-                    .build());
-        }
-
         // Task deadlines
         List<Task> taskDeadlines = taskRepository.findUpcomingDeadlinesByUserId(userId, today);
         for (Task t : taskDeadlines) {
             deadlineItems.add(DashboardStatsResponse.DeadlineItem.builder()
-                    .type("TASK")
                     .id(t.getId())
                     .title(t.getTitle())
                     .deadline(t.getDueDate())
@@ -205,27 +183,10 @@ public class DashboardService {
 
         List<DashboardStatsResponse.DeadlineItem> deadlineItems = new ArrayList<>();
 
-        List<Project> projectDeadlines = projectRepository
-                .findByUserIdAndDeadlineNotNullAndDeadlineAfterAndArchivedFalseOrderByDeadlineAsc(userId, today.minusDays(1));
-        for (Project p : projectDeadlines) {
-            if (!p.getDeadline().isAfter(cutoff)) {
-                deadlineItems.add(DashboardStatsResponse.DeadlineItem.builder()
-                        .type("PROJECT")
-                        .id(p.getId())
-                        .title(p.getTitle())
-                        .deadline(p.getDeadline())
-                        .projectTitle(p.getTitle())
-                        .daysRemaining(ChronoUnit.DAYS.between(today, p.getDeadline()))
-                        .status(p.getStatus().name())
-                        .build());
-            }
-        }
-
         List<Task> taskDeadlines = taskRepository.findUpcomingDeadlinesByUserId(userId, today);
         for (Task t : taskDeadlines) {
             if (!t.getDueDate().isAfter(cutoff)) {
                 deadlineItems.add(DashboardStatsResponse.DeadlineItem.builder()
-                        .type("TASK")
                         .id(t.getId())
                         .title(t.getTitle())
                         .deadline(t.getDueDate())

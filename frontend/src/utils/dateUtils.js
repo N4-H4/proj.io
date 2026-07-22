@@ -73,3 +73,25 @@ export function isDeadlinePassed(dateStr) {
   deadline.setHours(0, 0, 0, 0);
   return deadline < now;
 }
+
+/**
+ * Classify a deadline into one of three statuses.
+ * Strips the time component from both sides so the comparison
+ * is purely date-based (midnight-to-midnight).
+ *
+ * @param {string} dateStr — ISO date string (e.g. "2026-07-13")
+ * @returns {{ status: "Upcoming" | "Due Today" | "Overdue", badgeClass: string }}
+ */
+export function getDeadlineStatus(dateStr) {
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+
+  const deadline = new Date(dateStr);
+  deadline.setHours(0, 0, 0, 0);
+
+  const diffMs = deadline - now;
+
+  if (diffMs < 0)  return { status: 'Overdue',   badgeClass: 'badge badge-deadline-overdue' };
+  if (diffMs === 0) return { status: 'Due Today', badgeClass: 'badge badge-deadline-today' };
+  return              { status: 'Upcoming',  badgeClass: 'badge badge-deadline-upcoming' };
+}

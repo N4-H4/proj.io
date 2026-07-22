@@ -1,153 +1,166 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect, useCallback } from 'react';
 import { brainDumpService } from '../../services/brainDumpService';
-import NoteCard from './NoteCard';
-import ConfirmModal from '../ui/ConfirmModal';
-import { PlusIcon, CloseIcon, BrainIcon } from '../ui/Icons';
+import BrainDumpForm  from './BrainDumpForm';
+import BrainDumpGrid  from './BrainDumpGrid';
+import BrainDumpModal from './BrainDumpModal';
+
+// --- Serialisation helpers ---
+// title and category are encoded inside the content TEXT field as JSON so
+// that no backend schema changes are required.
+
+function serializeNote({ title, category, content }) {
+  return JSON.stringify({ title, category, body: content });
+}
+
+function deserializeNote(rawNote) {
+  let title    = '(untitled)';
+  let category = 'General';
+  let body     = rawNote.content ?? '';
+
+  try {
+    const parsed = JSON.parse(rawNote.content);
+    if (parsed && typeof parsed === 'object' && 'body' in parsed) {
+      title    = parsed.title    ?? title;
+      category = parsed.category ?? category;
+      body     = parsed.body     ?? body;
+    }
+  } catch {
+    // Legacy plain-text note -- keep the raw content as body
+  }
+
+  return {
+    ...rawNote,
+    title,
+    category,
+    body,
+  };
+}
+
+// --- Component ---
+
+const NOTES_PER_PAGE = 20;
 
 export default function BrainDumpSection({ projectId }) {
-  const [notes, setNotes] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [showForm, setShowForm] = useState(false);
-  const [editingNote, setEditingNote] = useState(null);
-  const [deletingNote, setDeletingNote] = useState(null);
-  const [content, setContent] = useState('');
-  const [saving, setSaving] = useState(false);
+  const [notes,        setNotes]        = useState([]);
+  const [loading,      setLoading]      = useState(true);
+  const [selectedNote, setSelectedNote] = useState(null);
+  const [modalOpen,    setModalOpen]    = useState(false);
+  const [currentPage,  setCurrentPage]  = useState(1);
 
-  useEffect(() => {
-    loadNotes();
-  }, [projectId]);
+  // -- Data fetching --
 
-  const loadNotes = async () => {
+  const loadNotes = useCallback(async () => {
     try {
-      const data = await brainDumpService.getAll(projectId);
-      setNotes(data);
+      const rawNotes = await brainDumpService.getAll(projectId);
+      setNotes(rawNotes.map(deserializeNote));
     } catch (err) {
       console.error('Failed to load notes:', err);
     } finally {
       setLoading(false);
     }
+  }, [projectId]);
+
+  useEffect(() => {
+    setLoading(true);
+    loadNotes();
+  }, [loadNotes]);
+
+  // Reset to page 1 whenever projectId changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [projectId]);
+
+  // -- Pagination math --
+
+  const totalNotes       = notes.length;
+  const totalPages       = Math.max(1, Math.ceil(totalNotes / NOTES_PER_PAGE));
+  const safePage         = Math.min(currentPage, totalPages);
+  const indexOfFirstNote = (safePage - 1) * NOTES_PER_PAGE;
+  const indexOfLastNote  = Math.min(indexOfFirstNote + NOTES_PER_PAGE, totalNotes);
+  const pagedNotes       = notes.slice(indexOfFirstNote, indexOfLastNote);
+
+  // Info counter text, e.g. "Showing 1-20 of 87 notes"
+  const showingStart = totalNotes === 0 ? 0 : indexOfFirstNote + 1;
+  const showingEnd   = indexOfLastNote;
+
+  // -- Handlers --
+
+  const handleCreate = async ({ title, category, content }) => {
+    const payload = {
+      content:   serializeNote({ title, category, content }),
+      projectId,
+    };
+    await brainDumpService.create(payload);
+    await loadNotes();
   };
 
-  const handleSave = async () => {
-    if (!content.trim()) return;
-    setSaving(true);
-    try {
-      if (editingNote) {
-        const updated = await brainDumpService.update(editingNote.id, {
-          content: content.trim(),
-          projectId,
-        });
-        setNotes((prev) => prev.map((n) => (n.id === updated.id ? updated : n)));
-      } else {
-        const newNote = await brainDumpService.create({
-          content: content.trim(),
-          projectId,
-        });
-        setNotes((prev) => [newNote, ...prev]);
-      }
-      resetForm();
-    } catch (err) {
-      console.error('Failed to save note:', err);
-    } finally {
-      setSaving(false);
-    }
+  const handleUpdate = async (noteId, { title, category, content }) => {
+    const payload = {
+      content:   serializeNote({ title, category, content }),
+      projectId,
+    };
+    await brainDumpService.update(noteId, payload);
+    // Refresh the grid and patch selectedNote so the modal shows fresh data
+    const rawNotes  = await brainDumpService.getAll(projectId);
+    const refreshed = rawNotes.map(deserializeNote);
+    setNotes(refreshed);
+    const updatedNote = refreshed.find((n) => n.id === noteId);
+    if (updatedNote) setSelectedNote(updatedNote);
   };
 
-  const handleDelete = async () => {
-    await brainDumpService.delete(deletingNote.id);
-    setNotes((prev) => prev.filter((n) => n.id !== deletingNote.id));
-    setDeletingNote(null);
+  const handleDelete = async (noteId) => {
+    await brainDumpService.delete(noteId);
+    setNotes((prev) => {
+      const next = prev.filter((n) => n.id !== noteId);
+      // Edge case: if deleting leaves the current page empty, fall back one page
+      const nextTotalPages = Math.max(1, Math.ceil(next.length / NOTES_PER_PAGE));
+      setCurrentPage((p) => Math.min(p, nextTotalPages));
+      return next;
+    });
+    handleModalClose();
   };
 
-  const startEdit = (note) => {
-    setEditingNote(note);
-    setContent(note.content);
-    setShowForm(true);
+  const handleCardClick = (note) => {
+    setSelectedNote(note);
+    setModalOpen(true);
   };
 
-  const resetForm = () => {
-    setShowForm(false);
-    setEditingNote(null);
-    setContent('');
+  const handleModalClose = () => {
+    setModalOpen(false);
+    setSelectedNote(null);
   };
 
-  if (loading) {
-    return (
-      <div className="loader">
-        <div className="loader-spinner" />
-      </div>
-    );
-  }
+  // -- Render --
 
   return (
     <div className="braindump-section">
-      {/* Header with add button */}
-      <div className="braindump-header">
-        <button className="btn btn-primary btn-sm" onClick={() => { resetForm(); setShowForm(true); }}>
-          <PlusIcon size={14} /> New Note
-        </button>
+      <div className="braindump-layout">
+        <BrainDumpForm
+          onSubmit={handleCreate}
+          loading={loading}
+        />
+
+        <BrainDumpGrid
+          notes={pagedNotes}
+          totalNotes={totalNotes}
+          loading={loading}
+          onCardClick={handleCardClick}
+          currentPage={safePage}
+          totalPages={totalPages}
+          showingStart={showingStart}
+          showingEnd={showingEnd}
+          onPageChange={setCurrentPage}
+        />
       </div>
 
-      {/* Inline Form */}
-      {showForm && (
-        <div className="braindump-form card">
-          <div className="braindump-form-header">
-            <h3>{editingNote ? 'Edit Note' : 'New Note'}</h3>
-            <button className="modal-close" onClick={resetForm}>
-              <CloseIcon size={16} />
-            </button>
-          </div>
-          <textarea
-            className="input-field handwritten"
-            placeholder="Write your thoughts here..."
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            rows={4}
-            autoFocus
-            style={{ fontSize: '1.1rem' }}
-          />
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '0.75rem' }}>
-            <button className="btn btn-secondary btn-sm" onClick={resetForm}>Cancel</button>
-            <button className="btn btn-primary btn-sm" onClick={handleSave} disabled={saving || !content.trim()}>
-              {saving ? 'Saving...' : editingNote ? 'Update' : 'Save'}
-            </button>
-          </div>
-        </div>
+      {modalOpen && selectedNote && (
+        <BrainDumpModal
+          note={selectedNote}
+          onClose={handleModalClose}
+          onUpdate={handleUpdate}
+          onDelete={handleDelete}
+        />
       )}
-
-      {/* Notes Grid */}
-      {notes.length === 0 && !showForm ? (
-        <div className="empty-state">
-          <div className="empty-state-icon">
-            <BrainIcon size={48} />
-          </div>
-          <h3>Your mind is clear</h3>
-          <p>Jot down ideas, plans, and random thoughts here. No structure needed!</p>
-        </div>
-      ) : (
-        <div className="notes-grid">
-          {notes.map((note, index) => (
-            <NoteCard
-              key={note.id}
-              note={note}
-              index={index}
-              onEdit={startEdit}
-              onDelete={(n) => setDeletingNote(n)}
-            />
-          ))}
-        </div>
-      )}
-
-      {/* Delete Confirmation */}
-      <ConfirmModal
-        isOpen={!!deletingNote}
-        title="Delete Note"
-        message="Are you sure you want to delete this note? This action cannot be undone."
-        confirmLabel="Delete"
-        onConfirm={handleDelete}
-        onCancel={() => setDeletingNote(null)}
-        danger
-      />
     </div>
   );
 }

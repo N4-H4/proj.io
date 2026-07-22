@@ -48,4 +48,17 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 
     @Query("SELECT COUNT(t) FROM Task t JOIN t.project p WHERE p.user.id = :userId AND t.status = 'DONE' AND t.updatedAt >= :since")
     long countCompletedByUserSince(@Param("userId") Long userId, @Param("since") java.time.LocalDateTime since);
+
+    // ── Deadlines endpoint ────────────────────────────────────────────────────
+
+    @Query("SELECT t FROM Task t JOIN FETCH t.project p WHERE p.user.id = :userId AND t.dueDate IS NOT NULL ORDER BY t.dueDate ASC")
+    List<Task> findAllWithDueDateByUserId(@Param("userId") Long userId);
+
+    /**
+     * Fetches a {@link Task} by its primary key, verifying ownership by matching
+     * the authenticated user's ID against the parent project's owner. Used by the
+     * deadline-update flow to prevent cross-user data mutation.
+     */
+    @Query("SELECT t FROM Task t JOIN FETCH t.project p WHERE t.id = :taskId AND p.user.id = :userId")
+    Optional<Task> findByIdAndUserId(@Param("taskId") Long taskId, @Param("userId") Long userId);
 }

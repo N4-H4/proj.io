@@ -27,6 +27,4 @@ public class ProjectRequest {
     private ProjectStatus status;
 
     private LocalDate startDate;
-
-    private LocalDate deadline;
 }
