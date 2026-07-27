@@ -43,7 +43,7 @@ export default function ProjectFormModal({ isOpen, onClose, onSubmit, project = 
     if (!formData.description.trim()) errors.description = "Project description is required";
     if (!formData.domain) errors.domain = "Please select a project domain";
     if (!formData.startDate) errors.startDate = "Start date is required";
-    
+
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -87,87 +87,90 @@ export default function ProjectFormModal({ isOpen, onClose, onSubmit, project = 
         )}
 
         <form onSubmit={handleSubmit}>
-            {/* Title */}
-            <div style={{ marginBottom: '1rem' }}>
-                <label className="input-label">Project Title *</label>
-                <input 
-                    type="text" 
-                    className={`input-field ${formErrors.title ? 'input-error' : ''}`}
-                    value={formData.title} 
-                    onChange={(e) => { setFormData({...formData, title: e.target.value}); clearError('title'); }} 
-                />
-                {formErrors.title && <p className="input-error-message">{formErrors.title}</p>}
+          {/* Title */}
+          <div style={{ marginBottom: '1rem' }}>
+            <label className="input-label">Project Title *</label>
+            <input
+              type="text"
+              className={`input-field ${formErrors.title ? 'input-error' : ''}`}
+              value={formData.title}
+              onChange={(e) => { setFormData({ ...formData, title: e.target.value }); clearError('title'); }}
+            />
+            {formErrors.title && <p className="input-error-message">{formErrors.title}</p>}
+          </div>
+
+          {/* Description */}
+          <div style={{ marginBottom: '1rem' }}>
+            <label className="input-label">Description *</label>
+            <textarea
+              className={`input-field ${formErrors.description ? 'input-error' : ''}`}
+              value={formData.description}
+              onChange={(e) => { setFormData({ ...formData, description: e.target.value }); clearError('description'); }}
+              rows={3}
+            />
+            {formErrors.description && <p className="input-error-message">{formErrors.description}</p>}
+          </div>
+
+          {/* Domain & Status Side-by-Side Flex */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+            <div>
+              <label className="input-label">Domain *</label>
+              <select
+                className={`input-field ${formErrors.domain ? 'input-error' : ''}`}
+                value={formData.domain}
+                onChange={(e) => { setFormData({ ...formData, domain: e.target.value }); clearError('domain'); }}
+              >
+                <option value="">Select Domain</option>
+                <option value="WEB_DEVELOPMENT">Web Development</option>
+                <option value="APP_DEVELOPMENT">App Development</option>
+                <option value="BACKEND">Backend</option>
+                <option value="FULL_STACK">Full Stack</option>
+                <option value="AI_ML">AI / ML</option>
+                <option value="DATA_SCIENCE">Data Science</option>
+                <option value="OTHER">Other</option>
+              </select>
+              {formErrors.domain && <p className="input-error-message">{formErrors.domain}</p>}
             </div>
 
-            {/* Description */}
-            <div style={{ marginBottom: '1rem' }}>
-                <label className="input-label">Description *</label>
-                <textarea 
-                    className={`input-field ${formErrors.description ? 'input-error' : ''}`}
-                    value={formData.description} 
-                    onChange={(e) => { setFormData({...formData, description: e.target.value}); clearError('description'); }} 
-                    rows={3}
-                />
-                {formErrors.description && <p className="input-error-message">{formErrors.description}</p>}
+            <div>
+              <label className="input-label">Status</label>
+              <select
+                className="input-field"
+                value={formData.status}
+                onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+              >
+                <option value="PLANNED">Planned</option>
+                <option value="IN_PROGRESS">In Progress</option>
+                <option value="COMPLETED">Completed</option>
+              </select>
             </div>
+          </div>
 
-            {/* Domain & Status Side-by-Side Flex */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-                <div>
-                    <label className="input-label">Domain *</label>
-                    <select 
-                        className={`input-field ${formErrors.domain ? 'input-error' : ''}`}
-                        value={formData.domain}
-                        onChange={(e) => { setFormData({...formData, domain: e.target.value}); clearError('domain'); }}
-                    >
-                        <option value="">Select Domain</option>
-                        <option value="FULL_STACK">Full Stack</option>
-                        <option value="BACKEND_API">Backend API</option>
-                        <option value="WEB_DEVELOPMENT">Web Development</option>
-                        <option value="MOBILE_APP">Mobile Application</option>
-                    </select>
-                    {formErrors.domain && <p className="input-error-message">{formErrors.domain}</p>}
-                </div>
+          {/* Start Date Input */}
+          <div style={{ marginBottom: '1rem' }}>
+            <label className="input-label">Start Date *</label>
+            <input
+              type="date"
+              className={`input-field ${formErrors.startDate ? 'input-error' : ''}`}
+              value={formData.startDate}
+              onChange={(e) => { setFormData({ ...formData, startDate: e.target.value }); clearError('startDate'); }}
+            />
+            {formErrors.startDate && <p className="input-error-message">{formErrors.startDate}</p>}
+          </div>
 
-                <div>
-                    <label className="input-label">Status</label>
-                    <select 
-                        className="input-field"
-                        value={formData.status}
-                        onChange={(e) => setFormData({...formData, status: e.target.value})}
-                    >
-                        <option value="PLANNED">Planned</option>
-                        <option value="IN_PROGRESS">In Progress</option>
-                        <option value="COMPLETED">Completed</option>
-                    </select>
-                </div>
-            </div>
-
-            {/* Start Date Input */}
-            <div style={{ marginBottom: '1rem' }}>
-                <label className="input-label">Start Date *</label>
-                <input 
-                    type="date" 
-                    className={`input-field ${formErrors.startDate ? 'input-error' : ''}`}
-                    value={formData.startDate} 
-                    onChange={(e) => { setFormData({...formData, startDate: e.target.value}); clearError('startDate'); }} 
-                />
-                {formErrors.startDate && <p className="input-error-message">{formErrors.startDate}</p>}
-            </div>
-
-            {/* Submit Actions */}
-            <div className="modal-footer">
-                <button type="button" onClick={onClose} className="btn btn-secondary">
-                    Cancel
-                </button>
-                <button 
-                    type="submit" 
-                    disabled={Object.keys(formErrors).length > 0 || loading}
-                    className="btn btn-primary"
-                >
-                    {loading ? 'Saving...' : isEdit ? 'Save Changes' : 'Save Project'}
-                </button>
-            </div>
+          {/* Submit Actions */}
+          <div className="modal-footer">
+            <button type="button" onClick={onClose} className="btn btn-secondary">
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={Object.keys(formErrors).length > 0 || loading}
+              className="btn btn-primary"
+            >
+              {loading ? 'Saving...' : isEdit ? 'Save Changes' : 'Save Project'}
+            </button>
+          </div>
         </form>
       </div>
     </div>

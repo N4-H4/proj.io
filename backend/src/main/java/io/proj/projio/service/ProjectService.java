@@ -4,13 +4,11 @@ import io.proj.projio.dto.request.ProjectRequest;
 import io.proj.projio.dto.response.ProjectResponse;
 import io.proj.projio.entity.ActivityLog;
 import io.proj.projio.entity.Project;
-import io.proj.projio.entity.WorkflowPhase;
 import io.proj.projio.enums.ProjectStatus;
-import io.proj.projio.enums.WorkflowStatus;
 import io.proj.projio.exception.ResourceNotFoundException;
 import io.proj.projio.repository.ActivityLogRepository;
 import io.proj.projio.repository.ProjectRepository;
-import io.proj.projio.repository.WorkflowPhaseRepository;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,29 +17,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
 public class ProjectService {
 
     private final ProjectRepository projectRepository;
-    private final WorkflowPhaseRepository workflowPhaseRepository;
     private final ActivityLogRepository activityLogRepository;
+    private final TemplateService templateService;
     private final UserService userService;
 
-    // Default SDLC phases created with every new project
-    private static final String[][] DEFAULT_PHASES = {
-            {"Requirement Gathering", "Define project scope, user needs, and functional requirements."},
-            {"Feasibility Study", "Assess technical, financial, and operational feasibility."},
-            {"System Analysis", "Analyze system requirements and define specifications."},
-            {"Software Design", "Create architecture, UI/UX mockups, and database schema."},
-            {"Implementation / Coding", "Write code, build features, and integrate components."},
-            {"Testing", "Perform unit, integration, and user acceptance testing."},
-            {"Integration", "Combine modules, connect APIs, and validate end-to-end flow."},
-            {"Deployment & Maintenance", "Deploy to production, monitor, and maintain the application."},
-    };
 
     public Page<ProjectResponse> getAllProjects(int page, int size) {
         Long userId = userService.getCurrentUserId();
@@ -90,21 +76,8 @@ public class ProjectService {
 
         Project savedProject = projectRepository.save(project);
 
-        // Auto-create the 8 SDLC workflow phases
-        for (int i = 0; i < DEFAULT_PHASES.length; i++) {
-            WorkflowPhase phase = WorkflowPhase.builder()
-                    .project(savedProject)
-                    .name(DEFAULT_PHASES[i][0])
-                    .description(DEFAULT_PHASES[i][1])
-                    .status(WorkflowStatus.NOT_STARTED)
-                    .phaseOrder(i)
-                    .build();
-            workflowPhaseRepository.save(phase);
-        }
-
-        // Persist initial progress (0% — all phases NOT_STARTED)
-        savedProject.setProgress(0);
-        savedProject = projectRepository.save(savedProject);
+        // Spawn domain-specific workflow phases via TemplateService
+        templateService.spawnPhases(savedProject);
 
         // Log activity
         logActivity("CREATED_PROJECT", "PROJECT", savedProject.getId(),
