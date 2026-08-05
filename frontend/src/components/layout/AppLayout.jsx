@@ -12,18 +12,18 @@ const PAGE_TITLES = {
 
 export default function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [dynamicTitle, setDynamicTitle] = useState('');
   const location = useLocation();
 
-  // Derive page title from current route
-  const title = PAGE_TITLES[location.pathname] ||
-    (location.pathname.startsWith('/projects/') ? 'Project Details' : 'Proj.io');
+  // Derive page title from current route, using dynamicTitle if available
+  const title = PAGE_TITLES[location.pathname] || dynamicTitle || 'Proj.io';
 
   return (
     <div className="app-layout">
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <TopBar title={title} onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
       <main className="app-content">
-        <Outlet />
+        <Outlet context={{ setDynamicTitle }} />
       </main>
     </div>
   );

@@ -1,9 +1,6 @@
 export default function TasksPage() {
   return (
     <div>
-      <div className="page-header">
-        <h1>✅ Tasks</h1>
-      </div>
 
       <div className="empty-state">
         <div className="empty-state-icon">📝</div>

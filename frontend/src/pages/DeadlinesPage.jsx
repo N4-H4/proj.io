@@ -87,15 +87,6 @@ export default function DeadlinesPage() {
   return (
     <div className="deadlines-page">
 
-      {/* ── Single Page Header ── */}
-      <div className="page-header">
-        <div>
-          <h1>Deadlines</h1>
-          <p className="deadlines-page-subtitle">
-            Track all task deadlines in one place.
-          </p>
-        </div>
-      </div>
 
       {/* ── Loading state ── */}
       {isLoading && (

@@ -8,9 +8,6 @@ export default function SettingsPage() {
 
   return (
     <div>
-      <div className="page-header">
-        <h1>Settings</h1>
-      </div>
 
       <div className="card" style={{ maxWidth: '500px' }}>
         <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>

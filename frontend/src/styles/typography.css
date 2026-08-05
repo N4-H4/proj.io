@@ -1,16 +1,14 @@
 /* ============================================
    PROJ.IO — TYPOGRAPHY
-   Google Fonts: Patrick Hand, Inter, Caveat
+   Uniform system font: Arial
    ============================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Patrick+Hand&display=swap');
-
-/* Font family tokens */
+/* Font family tokens — all unified to Arial */
 :root {
-  --font-heading: 'Patrick Hand', cursive;
-  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-handwritten: 'Caveat', cursive;
-  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --font-heading:     Arial, Helvetica, sans-serif;
+  --font-body:        Arial, Helvetica, sans-serif;
+  --font-handwritten: Arial, Helvetica, sans-serif;
+  --font-mono:        Arial, Helvetica, sans-serif;
 }
 
 /* Base typography */
@@ -24,7 +22,7 @@ body {
 /* Headings */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
-  font-weight: 400;
+  font-weight: 700;
   letter-spacing: 0.02em;
 }
 

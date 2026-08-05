@@ -29,4 +29,13 @@ public class WorkflowController {
             @Valid @RequestBody WorkflowPhaseRequest request) {
         return ResponseEntity.ok(workflowService.updatePhaseStatus(projectId, phaseId, request));
     }
+
+    @PutMapping("/active-phase")
+public ResponseEntity<Void> updateActivePhase(
+        @PathVariable Long projectId,
+        @RequestParam Long phaseId) {
+
+    workflowService.updateActivePhase(projectId, phaseId);
+    return ResponseEntity.noContent().build();
+}
 }

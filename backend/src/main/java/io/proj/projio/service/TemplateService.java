@@ -25,25 +25,21 @@ public class TemplateService {
      * null/blank/unrecognised domain fallback internally — then maps each
      * blueprint onto a persisted {@link WorkflowPhase} entity.
      *
-     * <h3>Field mapping</h3>
-     * <ul>
-     *   <li>{@code PhaseTemplate.name()}            → {@code WorkflowPhase.name}</li>
-     *   <li>{@code PhaseTemplate.guidance()}         → {@code WorkflowPhase.description}
-     *       (populates the existing {@code description TEXT} column with meaningful context)</li>
-     *   <li>{@code PhaseTemplate.order()}            → {@code WorkflowPhase.phaseOrder}</li>
-     *   <li>{@code WorkflowStatus.NOT_STARTED}       → {@code WorkflowPhase.status} (default)</li>
-     * </ul>
+     * <p><strong>Tasks are NOT auto-generated.</strong> Each phase starts with an
+     * empty task list. Users create their own tasks via the WorkflowTask API.
      *
-     * <h3>Future AI-readiness extension point</h3>
-     * {@code PhaseTemplate.expectedOutcome()} is intentionally <em>not</em> persisted today.
-     * Once {@code WorkflowPhase} gains an {@code expected_outcome} column (and the corresponding
-     * migration), map it here:
-     * <pre>
-     *   // TODO(AI-READINESS): .expectedOutcome(template.expectedOutcome())
-     * </pre>
-     * This field exists on the blueprint so the data model is correct from day one
-     * and the future column can be back-filled from the static config without any
-     * structural changes to {@link DomainTemplateConfig} or {@link PhaseTemplate}.
+     * <h3>Field mapping — Phase</h3>
+     * <ul>
+     *   <li>{@code PhaseTemplate.name()}               → {@code WorkflowPhase.name}</li>
+     *   <li>{@code PhaseTemplate.guidance()}            → {@code WorkflowPhase.guidance} (TEXT)</li>
+     *   <li>{@code PhaseTemplate.guidance()}            → {@code WorkflowPhase.description}
+     *       (also written for backward compatibility with legacy consumers)</li>
+     *   <li>{@code PhaseTemplate.expectedOutcome()}     → {@code WorkflowPhase.expectedOutcome} (TEXT)</li>
+     *   <li>{@code PhaseTemplate.completionCriteria()}  → {@code WorkflowPhase.completionCriteria} (TEXT,
+     *       newline-separated checklist)</li>
+     *   <li>{@code PhaseTemplate.order()}               → {@code WorkflowPhase.phaseOrder}</li>
+     *   <li>{@code WorkflowStatus.NOT_STARTED}          → {@code WorkflowPhase.status} (default)</li>
+     * </ul>
      *
      * @param project the newly created project whose domain drives template selection
      */
@@ -54,12 +50,12 @@ public class TemplateService {
             WorkflowPhase phase = WorkflowPhase.builder()
                     .project(project)
                     .name(template.name())
-                    .description(template.guidance())
+                    .description(template.guidance())   // backward-compat copy
+                    .guidance(template.guidance())
+                    .expectedOutcome(template.expectedOutcome())
+                    .completionCriteria(template.completionCriteria())
                     .phaseOrder(template.order())
                     .status(WorkflowStatus.NOT_STARTED)
-                    // TODO(AI-READINESS): .expectedOutcome(template.expectedOutcome())
-                    //   Deferred until WorkflowPhase gains an expected_outcome column.
-                    //   See PhaseTemplate.expectedOutcome() for the ready-to-use value.
                     .build();
             workflowPhaseRepository.save(phase);
         }

@@ -1,5 +1,7 @@
 package io.proj.projio.config;
 
+import java.util.List;
+
 /**
  * Immutable blueprint for a single workflow phase within a domain template.
  *
@@ -10,27 +12,31 @@ package io.proj.projio.config;
  *
  * <h3>Field responsibilities</h3>
  * <ul>
- *   <li>{@code order}           — Deterministic zero-based position within the domain workflow.
- *                                 Maps directly to {@code WorkflowPhase.phaseOrder}.</li>
- *   <li>{@code name}            — Human-readable phase label shown in the UI.
- *                                 Maps to {@code WorkflowPhase.name}.</li>
- *   <li>{@code guidance}        — The <em>purpose</em> of this phase: what the team should
- *                                 focus on and why. Maps to {@code WorkflowPhase.description}.</li>
- *   <li>{@code expectedOutcome} — A concrete, testable definition of "done" for this phase.
- *                                 Carried in the blueprint for future AI context but intentionally
- *                                 not persisted today — see TODO in TemplateService.</li>
+ *   <li>{@code order}               — Deterministic zero-based position within the domain workflow.
+ *                                     Maps directly to {@code WorkflowPhase.phaseOrder}.</li>
+ *   <li>{@code name}                — Human-readable phase label shown in the UI.
+ *                                     Maps to {@code WorkflowPhase.name}.</li>
+ *   <li>{@code guidance}            — The <em>purpose</em> of this phase: what the team should
+ *                                     focus on and why. Maps to {@code WorkflowPhase.guidance}
+ *                                     (TEXT column).</li>
+ *   <li>{@code expectedOutcome}     — A concrete, testable definition of "done" for this phase.
+ *                                     Maps to {@code WorkflowPhase.expectedOutcome} (TEXT column).
+ *                                     Also serves as AI-readiness context for future task generation.</li>
+ *   <li>{@code completionCriteria}  — A newline-separated checklist of concrete steps that must
+ *                                     be satisfied before this phase is considered complete
+ *                                     (e.g. {@code "Identify entities\nDefine relationships\nCreate schema"}).
+ *                                     Maps to {@code WorkflowPhase.completionCriteria} (TEXT column).</li>
+ *   <li>{@code tasks}               — Ordered list of default task titles to spawn as
+ *                                     {@link io.proj.projio.entity.WorkflowTask} entities when the phase
+ *                                     is created. Titles are concise, actionable strings.</li>
  * </ul>
- *
- * <h3>AI-Readiness note</h3>
- * {@code guidance} and {@code expectedOutcome} together form the semantic scaffold that a
- * future AI task-generation feature can consume to produce contextually appropriate tasks
- * rather than generic placeholders. Today, only {@code guidance} is written to the DB
- * ({@code WorkflowPhase.description}). {@code expectedOutcome} is preserved here as a
- * first-class field so the data model is correct from day one.
  */
 public record PhaseTemplate(
-        int    order,
-        String name,
-        String guidance,
-        String expectedOutcome
+        int          order,
+        String       name,
+        String       guidance,
+        String       expectedOutcome,
+        String       completionCriteria,
+        List<String> tasks
 ) {}
+

@@ -47,8 +47,6 @@ public class Project {
     @Column(name = "start_date")
     private LocalDate startDate;
 
-
-
     @Column(nullable = false)
     @Builder.Default
     private Boolean archived = false;
@@ -56,6 +54,10 @@ public class Project {
     @Column
     @Builder.Default
     private Integer progress = 0;
+
+    @Column(name = "active_phase_id")
+    private Long activePhaseId;
+
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

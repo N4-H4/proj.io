@@ -28,6 +28,7 @@ public class ProjectResponse {
     private int progress;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Long activePhaseId;
 
     public static ProjectResponse from(Project project) {
         int totalTasks = project.getTasks() != null ? project.getTasks().size() : 0;
@@ -51,6 +52,7 @@ public class ProjectResponse {
                 .progress(progressPct)
                 .createdAt(project.getCreatedAt())
                 .updatedAt(project.getUpdatedAt())
+                .activePhaseId(project.getActivePhaseId())
                 .build();
     }
 }

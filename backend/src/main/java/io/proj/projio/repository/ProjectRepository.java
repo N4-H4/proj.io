@@ -6,7 +6,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,7 +20,8 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 
     List<Project> findByUserIdAndArchivedOrderByCreatedAtDesc(Long userId, Boolean archived);
 
-    List<Project> findByUserIdAndStatusAndArchivedOrderByCreatedAtDesc(Long userId, ProjectStatus status, Boolean archived);
+    List<Project> findByUserIdAndStatusAndArchivedOrderByCreatedAtDesc(Long userId, ProjectStatus status,
+            Boolean archived);
 
     List<Project> findByUserIdOrderByCreatedAtDesc(Long userId);
 
@@ -33,4 +36,8 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     Optional<Project> findFirstByUserIdAndStatusAndArchivedFalseOrderByUpdatedAtDesc(
             Long userId, ProjectStatus status);
 
+    @Modifying
+    @Query("UPDATE Project p SET p.activePhaseId = :phaseId WHERE p.id = :projectId")
+    int updateActivePhase(@Param("projectId") Long projectId,
+            @Param("phaseId") Long phaseId);
 }

@@ -7,6 +7,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "workflow_phases", indexes = {
@@ -33,6 +35,15 @@ public class WorkflowPhase {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    @Column(columnDefinition = "TEXT")
+    private String guidance;
+
+    @Column(name = "expected_outcome", columnDefinition = "TEXT")
+    private String expectedOutcome;
+
+    @Column(name = "completion_criteria", columnDefinition = "TEXT")
+    private String completionCriteria;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @Builder.Default
@@ -40,6 +51,10 @@ public class WorkflowPhase {
 
     @Column(name = "phase_order", nullable = false)
     private Integer phaseOrder;
+
+    @OneToMany(mappedBy = "workflowPhase", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<WorkflowTask> tasks = new ArrayList<>();
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

@@ -32,4 +32,5 @@ export const projectService = {
     const response = await api.put(`${API.PROJECTS}/${id}/archive`, { archived });
     return response.data;
   },
+
 };

@@ -46,15 +46,14 @@ export default function ProjectsPage() {
 
   return (
     <div>
-      <div className="page-header">
-        <h1>Projects</h1>
-        {projects.length > 0 && (
+      {projects.length > 0 && (
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1.5rem' }}>
           <button className="btn btn-primary" onClick={() => setShowModal(true)}>
             <PlusIcon size={16} />
             New Project
           </button>
-        )}
-      </div>
+        </div>
+      )}
 
       {projects.length === 0 ? (
         <div className="empty-state">

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useOutletContext } from 'react-router-dom';
 import { projectService } from '../services/projectService';
 import { workflowService } from '../services/workflowService';
 import ProjectOverview from '../components/project/ProjectOverview';
@@ -18,6 +18,7 @@ const TABS = [
 export default function ProjectDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { setDynamicTitle } = useOutletContext() || {};
   const [project, setProject] = useState(null);
   const [workflow, setWorkflow] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -27,6 +28,15 @@ export default function ProjectDetailPage() {
   useEffect(() => {
     loadProjectData();
   }, [id]);
+
+  useEffect(() => {
+    if (project && setDynamicTitle) {
+      setDynamicTitle(project.name);
+    }
+    return () => {
+      if (setDynamicTitle) setDynamicTitle('');
+    };
+  }, [project, setDynamicTitle]);
 
   const loadProjectData = async () => {
     try {
@@ -78,9 +88,6 @@ export default function ProjectDetailPage() {
     <div className="project-detail-page">
       {/* Header */}
       <div className="project-detail-header">
-        <button className="btn btn-ghost btn-sm" onClick={() => navigate('/projects')}>
-          <ArrowLeftIcon size={16} /> Projects
-        </button>
         <div className="project-detail-title-row">
           <h1>{project.name}</h1>
           {project.domain && <span className="domain-tag">{project.domain}</span>}
@@ -116,6 +123,9 @@ export default function ProjectDetailPage() {
             phases={workflow} 
             onPhaseUpdate={handlePhaseUpdate}
             projectProgress={project.progress || 0}
+            domain={project.domain}
+            activePhaseId={project.activePhaseId}
+            onActivePhaseUpdate={() => loadProjectData()}
           />
         )}
         {activeTab === 'tasks' && (
