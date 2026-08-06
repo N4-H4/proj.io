@@ -46,6 +46,12 @@ public class WorkflowTaskResponse {
 
     private Integer taskOrder;
 
+    /**
+     * Zero-based index of the acceptance criterion this task belongs to.
+     * Matches the position in the parent phase's {@code completionCriteria} newline-split list.
+     */
+    private Integer criterionIndex;
+
     public static WorkflowTaskResponse from(WorkflowTask task) {
         WorkflowTaskStatus status = task.getStatus();
         return WorkflowTaskResponse.builder()
@@ -56,6 +62,7 @@ public class WorkflowTaskResponse {
                 .status(status)
                 .completed(status == WorkflowTaskStatus.DONE)
                 .taskOrder(task.getTaskOrder())
+                .criterionIndex(task.getCriterionIndex())
                 .build();
     }
 }

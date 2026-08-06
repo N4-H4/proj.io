@@ -7,11 +7,6 @@ export const workflowService = {
     return response.data;
   },
 
-  async updateWorkflowPhase(projectId, phaseId, status) {
-    const response = await api.put(`${API.PROJECTS}/${projectId}/workflow/${phaseId}`, { status });
-    return response.data;
-  },
-
   async updateActivePhase(projectId, phaseId) {
     await api.put(
       `${API.PROJECTS}/${projectId}/workflow/active-phase`,
@@ -27,6 +22,10 @@ export const workflowService = {
     return response.data;
   },
 
+  /**
+   * Create a task linked to a specific acceptance criterion.
+   * @param {{ phaseId: number, title: string, criterionIndex: number }} payload
+   */
   async createTask(payload) {
     const response = await api.post('/workflow-tasks', payload);
     return response.data;

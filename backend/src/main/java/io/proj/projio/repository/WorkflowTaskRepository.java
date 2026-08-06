@@ -22,6 +22,24 @@ public interface WorkflowTaskRepository extends JpaRepository<WorkflowTask, Long
     @Query("SELECT COALESCE(MAX(t.taskOrder), -1) FROM WorkflowTask t WHERE t.workflowPhase.id = :phaseId")
     int findMaxTaskOrderByPhaseId(@Param("phaseId") Long phaseId);
 
+    /** Total count of tasks for a phase. */
+    long countByWorkflowPhaseId(Long phaseId);
+
+    /** Count tasks for a specific criterion index within a phase. */
+    long countByWorkflowPhaseIdAndCriterionIndex(Long phaseId, int criterionIndex);
+
+    /** Count tasks for a specific criterion index within a phase that are DONE. */
+    long countByWorkflowPhaseIdAndCriterionIndexAndStatus(Long phaseId, int criterionIndex, io.proj.projio.enums.WorkflowTaskStatus status);
+
+    /** Count all DONE tasks for a phase (used to detect NOT_STARTED vs IN_PROGRESS). */
+    long countByWorkflowPhaseIdAndStatus(Long phaseId, io.proj.projio.enums.WorkflowTaskStatus status);
+
+    /**
+     * Count tasks in a phase that do NOT have the given criterionIndex.
+     * Used to detect whether a criteria-less phase has any real (non-General) tasks.
+     */
+    long countByWorkflowPhaseIdAndCriterionIndexNot(Long phaseId, int criterionIndex);
+
     /** Delete all tasks belonging to a phase (used if a phase is deleted). */
     void deleteAllByWorkflowPhaseId(Long phaseId);
 }

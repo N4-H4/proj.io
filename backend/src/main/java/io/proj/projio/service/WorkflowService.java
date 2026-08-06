@@ -124,9 +124,16 @@ public class WorkflowService {
                 })
                 .collect(Collectors.toList());
     }
-
     /**
-     * Update a phase's status and trigger project progress recalculation.
+     * Manually overrides a phase's status and triggers project progress recalculation.
+     *
+     * <p><strong>Internal infrastructure only.</strong> This method exists for Admin
+     * panels, AI override agents, and disaster-recovery tooling. Normal users should
+     * never reach this path — phase status is derived automatically by
+     * {@link io.proj.projio.service.WorkflowTaskService#recomputePhaseStatus}.
+     *
+     * <p>Calling this method bypasses the automatic criterion-completion engine.
+     * Use with care: a subsequent task mutation will overwrite the manually set status.
      */
     @Transactional
     public WorkflowPhaseResponse updatePhaseStatus(Long projectId, Long phaseId, WorkflowPhaseRequest request) {
@@ -157,10 +164,7 @@ public class WorkflowService {
         return WorkflowPhaseResponse.from(saved);
     }
 
-    /**
-     * Calculate progress: (COMPLETED phases / total phases) * 100.
-     * Returns a clean integer percentage (e.g. 25, not 25.0).
-     */
+
     private int calculateProgress(Long projectId) {
         long total = workflowPhaseRepository.countByProjectId(projectId);
         if (total == 0)

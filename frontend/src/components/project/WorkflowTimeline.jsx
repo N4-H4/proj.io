@@ -3,27 +3,243 @@ import { WORKFLOW_STATUS_LABELS } from '../../utils/constants';
 import { CheckIcon, ClockIcon } from '../ui/Icons';
 import { workflowService } from '../../services/workflowService';
 
+/**
+ * Virtual sentinel index for the "General" criterion (mirrors WorkflowTaskService.GENERAL_CRITERION_INDEX).
+ * Tasks stored with this index are informational and never block phase completion.
+ */
+const GENERAL_CRITERION_INDEX = -1;
 
+// ─────────────────────────────────────────────────────────────────────────────
+// CriterionBlock — renders a single acceptance criterion + its tasks
+// ─────────────────────────────────────────────────────────────────────────────
 
-const STATUS_CYCLE = ['NOT_STARTED', 'IN_PROGRESS', 'COMPLETED'];
-
-/** Display-only checkbox — purely visual, no state or handlers */
-const CHECKBOX_EMPTY = '☐';
-
-/** Single phase card — extracted for clarity */
-function PhaseCard({ phase, index, totalPhases, isActive, onCycleStatus }) {
-  const [expanded, setExpanded] = useState(isActive);
-
-  // ── Task state ─────────────────────────────────────────────────────────
-  const [tasks, setTasks] = useState([]);
-  const [tasksLoaded, setTasksLoaded] = useState(false);
-  const [tasksLoading, setTasksLoading] = useState(false);
+function CriterionBlock({
+  criterionIndex,
+  criterionText,
+  tasks,
+  onToggleTask,
+  onDeleteTask,
+  onAddTask,
+}) {
   const [addingTask, setAddingTask] = useState(false);
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [taskSaving, setTaskSaving] = useState(false);
   const addInputRef = useRef(null);
 
-  const statusClass = phase.status.toLowerCase().replace('_', '-');
+  const criterionTasks = tasks.filter(t => t.criterionIndex === criterionIndex);
+  const allDone = criterionTasks.length > 0 && criterionTasks.every(t => t.status === 'DONE');
+
+  useEffect(() => {
+    if (addingTask) addInputRef.current?.focus();
+  }, [addingTask]);
+
+  const handleCreate = async () => {
+    const title = newTaskTitle.trim();
+    if (!title || taskSaving) return;
+    setTaskSaving(true);
+    try {
+      await onAddTask(title, criterionIndex);
+      setNewTaskTitle('');
+      setAddingTask(false);
+    } finally {
+      setTaskSaving(false);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') handleCreate();
+    if (e.key === 'Escape') { setAddingTask(false); setNewTaskTitle(''); }
+  };
+
+  return (
+    <div className="criterion-block">
+      {/* Criterion header — read-only computed checkbox */}
+      <div className="criterion-header">
+        <span
+          className={`phase-criteria-checkbox criterion-checkbox-computed ${allDone ? 'criterion-checkbox-done' : ''}`}
+          aria-label={allDone ? 'Criterion complete' : 'Criterion incomplete'}
+          aria-readonly="true"
+          role="checkbox"
+          aria-checked={allDone}
+        >
+          {allDone ? '☑' : '☐'}
+        </span>
+        <span className="criterion-label">{criterionText}</span>
+      </div>
+
+      {/* Tasks nested under this criterion */}
+      {criterionTasks.length > 0 && (
+        <ul className="phase-tasks-list criterion-tasks-list" role="list">
+          {criterionTasks.map(task => (
+            <li
+              key={task.id}
+              className={`phase-task-item ${task.status === 'DONE' ? 'phase-task-completed' : ''}`}
+            >
+              <button
+                className="phase-task-checkbox"
+                onClick={() => onToggleTask(task)}
+                aria-label={task.status === 'DONE' ? `Mark "${task.title}" incomplete` : `Mark "${task.title}" complete`}
+                aria-pressed={task.status === 'DONE'}
+              >
+                {task.status === 'DONE' ? '☑' : '☐'}
+              </button>
+              <span className="phase-task-title">{task.title}</span>
+              <button
+                className="phase-task-delete"
+                onClick={() => onDeleteTask(task)}
+                aria-label={`Delete task "${task.title}"`}
+                title="Delete task"
+              >
+                ✕
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {/* Inline add-task row */}
+      {addingTask ? (
+        <div className="phase-task-add-row criterion-add-row">
+          <input
+            ref={addInputRef}
+            className="phase-task-input"
+            type="text"
+            placeholder="Task title… (Enter to save, Esc to cancel)"
+            value={newTaskTitle}
+            onChange={e => setNewTaskTitle(e.target.value)}
+            onKeyDown={handleKeyDown}
+            maxLength={200}
+            disabled={taskSaving}
+          />
+        </div>
+      ) : (
+        <button
+          className="phase-task-add-btn criterion-add-btn"
+          onClick={() => setAddingTask(true)}
+        >
+          + Add Task
+        </button>
+      )}
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// GeneralCriterionBlock — housekeeping tasks not tied to any specific criterion
+// ─────────────────────────────────────────────────────────────────────────────
+
+function GeneralCriterionBlock({ tasks, onToggleTask, onDeleteTask, onAddTask }) {
+  const [addingTask, setAddingTask] = useState(false);
+  const [newTaskTitle, setNewTaskTitle] = useState('');
+  const [taskSaving, setTaskSaving] = useState(false);
+  const addInputRef = useRef(null);
+
+  const generalTasks = tasks.filter(t => t.criterionIndex === GENERAL_CRITERION_INDEX);
+
+  useEffect(() => {
+    if (addingTask) addInputRef.current?.focus();
+  }, [addingTask]);
+
+  const handleCreate = async () => {
+    const title = newTaskTitle.trim();
+    if (!title || taskSaving) return;
+    setTaskSaving(true);
+    try {
+      await onAddTask(title, GENERAL_CRITERION_INDEX);
+      setNewTaskTitle('');
+      setAddingTask(false);
+    } finally {
+      setTaskSaving(false);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') handleCreate();
+    if (e.key === 'Escape') { setAddingTask(false); setNewTaskTitle(''); }
+  };
+
+  return (
+    <div className="criterion-block criterion-block-general">
+      <div className="criterion-header">
+        <span
+          className="phase-criteria-checkbox criterion-checkbox-computed criterion-checkbox-general"
+          aria-label="General housekeeping tasks (informational)"
+          aria-readonly="true"
+          role="presentation"
+        >
+          📋
+        </span>
+        <span className="criterion-label criterion-label-general">General</span>
+        <span className="criterion-general-hint">Housekeeping — does not affect phase completion</span>
+      </div>
+
+      {generalTasks.length > 0 && (
+        <ul className="phase-tasks-list criterion-tasks-list" role="list">
+          {generalTasks.map(task => (
+            <li
+              key={task.id}
+              className={`phase-task-item ${task.status === 'DONE' ? 'phase-task-completed' : ''}`}
+            >
+              <button
+                className="phase-task-checkbox"
+                onClick={() => onToggleTask(task)}
+                aria-label={task.status === 'DONE' ? `Mark "${task.title}" incomplete` : `Mark "${task.title}" complete`}
+                aria-pressed={task.status === 'DONE'}
+              >
+                {task.status === 'DONE' ? '☑' : '☐'}
+              </button>
+              <span className="phase-task-title">{task.title}</span>
+              <button
+                className="phase-task-delete"
+                onClick={() => onDeleteTask(task)}
+                aria-label={`Delete task "${task.title}"`}
+                title="Delete task"
+              >
+                ✕
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {addingTask ? (
+        <div className="phase-task-add-row criterion-add-row">
+          <input
+            ref={addInputRef}
+            className="phase-task-input"
+            type="text"
+            placeholder="General task title… (Enter to save, Esc to cancel)"
+            value={newTaskTitle}
+            onChange={e => setNewTaskTitle(e.target.value)}
+            onKeyDown={handleKeyDown}
+            maxLength={200}
+            disabled={taskSaving}
+          />
+        </div>
+      ) : (
+        <button
+          className="phase-task-add-btn criterion-add-btn criterion-add-btn-general"
+          onClick={() => setAddingTask(true)}
+        >
+          + Add General Task
+        </button>
+      )}
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PhaseCard — single phase with nested criteria → tasks hierarchy
+// ─────────────────────────────────────────────────────────────────────────────
+
+function PhaseCard({ phase, index, totalPhases, isActive }) {
+  const [expanded, setExpanded] = useState(isActive);
+
+  const [tasks, setTasks] = useState([]);
+  const [tasksLoaded, setTasksLoaded] = useState(false);
+  const [tasksLoading, setTasksLoading] = useState(false);
+
+  const statusClass = phase.status.toLowerCase().replace(/_/g, '-');
 
   // Parse completion criteria lines (split on \n, filter blanks)
   const criteriaLines = phase.completionCriteria
@@ -44,82 +260,49 @@ function PhaseCard({ phase, index, totalPhases, isActive, onCycleStatus }) {
     }
   }, [expanded, tasksLoaded, tasksLoading, phase.id]);
 
-  // Focus the input whenever the add-row becomes visible
-  useEffect(() => {
-    if (addingTask) addInputRef.current?.focus();
-  }, [addingTask]);
-
   // ── Task handlers ──────────────────────────────────────────────────────
 
   const handleToggleTask = async (task) => {
-    // Derive next status from current status (enum contract: DONE | TODO)
     const nextStatus = task.status === 'DONE' ? 'TODO' : 'DONE';
-    // Optimistic update — reflect toggle instantly
     const snapshot = tasks;
     setTasks(prev =>
       prev.map(t => t.id === task.id ? { ...t, status: nextStatus, completed: nextStatus === 'DONE' } : t)
     );
     try {
-      // Reconcile with server response — canonical source of truth
       const updated = await workflowService.updateTask(task.id, { status: nextStatus });
       setTasks(prev => prev.map(t => t.id === updated.id ? updated : t));
     } catch (err) {
       console.error('Failed to toggle task:', err);
-      setTasks(snapshot); // revert on error
+      setTasks(snapshot);
     }
   };
 
   const handleDeleteTask = async (task) => {
-    // Optimistic removal
     const snapshot = tasks;
     setTasks(prev => prev.filter(t => t.id !== task.id));
     try {
       await workflowService.deleteTask(task.id);
-      // DELETE returns 204 No Content — nothing to reconcile; optimistic state is correct
     } catch (err) {
       console.error('Failed to delete task:', err);
-      setTasks(snapshot); // revert on error
+      setTasks(snapshot);
     }
   };
 
-  const handleCreateTask = async () => {
-    const title = newTaskTitle.trim();
-    if (!title || taskSaving) return;
-    setTaskSaving(true);
-    try {
-      const created = await workflowService.createTask({
-        phaseId: phase.id,
-        title,
-        taskOrder: tasks.length,
-      });
-      setTasks(prev => [...prev, created]);
-      setNewTaskTitle('');
-      setAddingTask(false);
-    } catch (err) {
-      console.error('Failed to create task:', err);
-    } finally {
-      setTaskSaving(false);
-    }
-  };
-
-  const handleAddKeyDown = (e) => {
-    if (e.key === 'Enter') handleCreateTask();
-    if (e.key === 'Escape') {
-      setAddingTask(false);
-      setNewTaskTitle('');
-    }
-  };
-
-  // ── Existing header handlers ────────────────────────────────────────────
-
-  const handleHeaderClick = () => {
-    onCycleStatus(phase);
+  const handleAddTask = async (title, criterionIndex) => {
+    const created = await workflowService.createTask({
+      phaseId: phase.id,
+      title,
+      criterionIndex,
+    });
+    setTasks(prev => [...prev, created]);
   };
 
   const handleExpandToggle = (e) => {
     e.stopPropagation();
     setExpanded(prev => !prev);
   };
+
+  const doneCount = tasks.filter(t => t.status === 'DONE').length;
 
   return (
     <div
@@ -133,11 +316,12 @@ function PhaseCard({ phase, index, totalPhases, isActive, onCycleStatus }) {
       {/* ── Phase Header Row ── */}
       <div
         className="workflow-phase-header"
-        onClick={handleHeaderClick}
         role="button"
         tabIndex={0}
-        onKeyDown={(e) => e.key === 'Enter' && handleHeaderClick(e)}
-        title={`Click to change status — currently: ${WORKFLOW_STATUS_LABELS[phase.status]}`}
+        onClick={handleExpandToggle}
+        onKeyDown={(e) => e.key === 'Enter' && handleExpandToggle(e)}
+        aria-expanded={expanded}
+        aria-label={`${phase.name} — status: ${WORKFLOW_STATUS_LABELS[phase.status]}`}
       >
         {/* Status indicator dot */}
         <div className={`workflow-status-dot workflow-dot-${statusClass}`}>
@@ -163,6 +347,11 @@ function PhaseCard({ phase, index, totalPhases, isActive, onCycleStatus }) {
                   ⚡ Active Phase
                 </span>
               )}
+              {tasksLoaded && tasks.length > 0 && (
+                <span className="phase-tasks-count">
+                  {doneCount}/{tasks.length}
+                </span>
+              )}
             </div>
           </div>
 
@@ -183,7 +372,7 @@ function PhaseCard({ phase, index, totalPhases, isActive, onCycleStatus }) {
       {expanded && (
         <div className="workflow-phase-body" onClick={(e) => e.stopPropagation()}>
 
-          {/* 1. Guidance — primary instructional text (phase.description is retired) */}
+          {/* 1. Guidance */}
           {phase.guidance && (
             <div className="phase-section phase-section-guidance">
               <div className="phase-section-header">
@@ -205,109 +394,60 @@ function PhaseCard({ phase, index, totalPhases, isActive, onCycleStatus }) {
             </div>
           )}
 
-          {/* 3. Completion Criteria — display-only ☐ checkboxes, no state or handlers */}
+          {/* 3. Acceptance Criteria → Tasks (nested hierarchy) */}
           {criteriaLines.length > 0 && (
             <div className="phase-section phase-section-criteria">
               <div className="phase-section-header">
                 <span className="phase-section-icon">✅</span>
-                <span className="phase-section-title">Completion Criteria</span>
+                <span className="phase-section-title">Acceptance Criteria</span>
               </div>
-              <ul className="phase-criteria-list" role="list">
-                {criteriaLines.map((line, i) => (
-                  <li key={i} className="phase-criteria-item">
-                    <span className="phase-criteria-checkbox" aria-hidden="true">{CHECKBOX_EMPTY}</span>
-                    <span className="phase-criteria-text">{line}</span>
-                  </li>
-                ))}
-              </ul>
+
+              {tasksLoading && (
+                <p className="phase-tasks-empty">Loading tasks…</p>
+              )}
+
+              {!tasksLoading && (
+                <ul className="phase-criteria-list" role="list">
+                  {criteriaLines.map((line, i) => (
+                    <li key={i} className="phase-criteria-item phase-criteria-item-expandable">
+                      <CriterionBlock
+                        criterionIndex={i}
+                        criterionText={line}
+                        tasks={tasks}
+                        onToggleTask={handleToggleTask}
+                        onDeleteTask={handleDeleteTask}
+                        onAddTask={handleAddTask}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           )}
 
-          {/* 4. Tasks — interactive checklist; spacing via CSS margin-top, no <hr> */}
-          <div className="phase-section phase-section-tasks">
-            <div className="phase-section-header">
-              <span className="phase-section-icon">📋</span>
-              <span className="phase-section-title">Tasks</span>
-              {tasks.length > 0 && (
-                <span className="phase-tasks-count">
-                  {tasks.filter(t => t.status === 'DONE').length}/{tasks.length}
-                </span>
-              )}
+          {/* 4. General — housekeeping tasks not tied to any acceptance criterion */}
+          {tasksLoaded && (
+            <div className="phase-section phase-section-general">
+              <GeneralCriterionBlock
+                tasks={tasks}
+                onToggleTask={handleToggleTask}
+                onDeleteTask={handleDeleteTask}
+                onAddTask={handleAddTask}
+              />
             </div>
-
-            {/* Loading indicator — shown only during initial fetch */}
-            {tasksLoading && (
-              <p className="phase-tasks-empty">Loading tasks…</p>
-            )}
-
-            {tasksLoaded && tasks.length === 0 && !addingTask && (
-              <p className="phase-tasks-empty">No tasks yet.</p>
-            )}
-
-            {tasks.length > 0 && (
-              <ul className="phase-tasks-list" role="list">
-                {tasks.map(task => (
-                  <li key={task.id} className={`phase-task-item ${task.status === 'DONE' ? 'phase-task-completed' : ''}`}>
-                    <button
-                      className="phase-task-checkbox"
-                      onClick={() => handleToggleTask(task)}
-                      aria-label={task.status === 'DONE' ? `Mark "${task.title}" incomplete` : `Mark "${task.title}" complete`}
-                      aria-pressed={task.status === 'DONE'}
-                    >
-                      {task.status === 'DONE' ? '☑' : '☐'}
-                    </button>
-                    <span className="phase-task-title">{task.title}</span>
-                    <button
-                      className="phase-task-delete"
-                      onClick={() => handleDeleteTask(task)}
-                      aria-label={`Delete task "${task.title}"`}
-                      title="Delete task"
-                    >
-                      ✕
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
-
-            {/* Inline add row */}
-            {addingTask ? (
-              <div className="phase-task-add-row">
-                <input
-                  ref={addInputRef}
-                  className="phase-task-input"
-                  type="text"
-                  placeholder="Task title… (Enter to save, Esc to cancel)"
-                  value={newTaskTitle}
-                  onChange={e => setNewTaskTitle(e.target.value)}
-                  onKeyDown={handleAddKeyDown}
-                  maxLength={200}
-                  disabled={taskSaving}
-                />
-              </div>
-            ) : (
-              <button
-                className="phase-task-add-btn"
-                onClick={() => setAddingTask(true)}
-              >
-                + Add Task
-              </button>
-            )}
-          </div>
+          )}
         </div>
       )}
     </div>
   );
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// WorkflowTimeline — top-level component
+// ─────────────────────────────────────────────────────────────────────────────
+
 export default function WorkflowTimeline({ projectId, phases, onPhaseUpdate, projectProgress, domain, activePhaseId, onActivePhaseUpdate }) {
   const [showReevaluate, setShowReevaluate] = useState(false);
-
-  const handleCycleStatus = (phase) => {
-    const currentIndex = STATUS_CYCLE.indexOf(phase.status);
-    const nextStatus = STATUS_CYCLE[(currentIndex + 1) % STATUS_CYCLE.length];
-    onPhaseUpdate(phase.id, nextStatus);
-  };
 
   const sortedPhases = [...(phases || [])].sort((a, b) => (a.phaseOrder || 0) - (b.phaseOrder || 0));
 
@@ -368,7 +508,6 @@ export default function WorkflowTimeline({ projectId, phases, onPhaseUpdate, pro
             index={index}
             totalPhases={sortedPhases.length}
             isActive={phase.id === activePhaseId}
-            onCycleStatus={handleCycleStatus}
           />
         ))}
       </div>

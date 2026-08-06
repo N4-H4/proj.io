@@ -620,6 +620,116 @@
   color: var(--accent-primary);
 }
 
+/* ── Criterion Block (nested tasks under acceptance criteria) ── */
+.phase-criteria-item-expandable {
+  display: block;
+  padding: 0;
+}
+
+.criterion-block {
+  width: 100%;
+  padding: 0.5rem 0.625rem;
+  border-radius: var(--radius-sm);
+  border-left: 2px solid var(--border);
+  transition: border-color var(--transition-fast);
+}
+
+.criterion-block:hover {
+  border-left-color: var(--accent-primary, #7c6cfc);
+}
+
+.criterion-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+  margin-bottom: 0.375rem;
+}
+
+.criterion-checkbox-computed {
+  cursor: default;
+  pointer-events: none;
+  flex-shrink: 0;
+  font-size: 1rem;
+  line-height: 1;
+  color: var(--text-tertiary);
+  user-select: none;
+  margin-top: 2px;
+  transition: color var(--transition-fast);
+}
+
+.criterion-checkbox-done {
+  color: var(--success, #48bb78);
+}
+
+.criterion-label {
+  flex: 1;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+.criterion-tasks-list {
+  margin-left: 1.5rem;
+  margin-top: 0.25rem;
+}
+
+.criterion-add-row {
+  margin-left: 1.5rem;
+}
+
+.criterion-add-btn {
+  margin-left: 1.5rem;
+  width: calc(100% - 1.5rem);
+}
+
+/* ── General criterion block (virtual, informational) ── */
+.criterion-block-general {
+  border-left-color: var(--border-subtle, rgba(255,255,255,0.06));
+  background: rgba(255,255,255,0.015);
+  margin-top: 0.375rem;
+}
+
+.criterion-block-general:hover {
+  border-left-color: var(--text-tertiary);
+}
+
+.criterion-checkbox-general {
+  font-size: 0.85rem;
+  opacity: 0.55;
+}
+
+.criterion-label-general {
+  font-style: italic;
+  opacity: 0.7;
+  font-weight: 400;
+}
+
+.criterion-general-hint {
+  font-size: 0.72rem;
+  color: var(--text-tertiary);
+  opacity: 0.6;
+  margin-left: auto;
+  align-self: center;
+  white-space: nowrap;
+}
+
+.phase-section-general {
+  margin-top: 0.25rem;
+  padding-top: 0.25rem;
+  border-top: 1px dashed var(--border-subtle, rgba(255,255,255,0.05));
+}
+
+.criterion-add-btn-general {
+  opacity: 0.65;
+  font-style: italic;
+}
+
+.criterion-add-btn-general:hover {
+  opacity: 1;
+}
+
+
 /* ─── Brain Dump Section ─── */
 .braindump-section {
   animation: fadeInUp 0.3s ease;

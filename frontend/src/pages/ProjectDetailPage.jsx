@@ -55,14 +55,6 @@ export default function ProjectDetailPage() {
     }
   };
 
-  const handlePhaseUpdate = async (phaseId, status) => {
-    try {
-      await workflowService.updateWorkflowPhase(id, phaseId, status);
-      await loadProjectData();
-    } catch (err) {
-      console.error('Failed to update phase:', err);
-    }
-  };
 
   if (loading) {
     return (
@@ -121,7 +113,6 @@ export default function ProjectDetailPage() {
           <WorkflowTimeline 
             projectId={project.id} 
             phases={workflow} 
-            onPhaseUpdate={handlePhaseUpdate}
             projectProgress={project.progress || 0}
             domain={project.domain}
             activePhaseId={project.activePhaseId}

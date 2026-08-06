@@ -56,6 +56,15 @@ public class WorkflowTask {
     @Column(name = "task_order", nullable = false)
     private Integer taskOrder;
 
+    /*
+     * MVP implementation.
+     * criterionIndex intentionally references the ordered completionCriteria list.
+     * Future versions may replace this with a dedicated AcceptanceCriterion entity
+     * without changing task logic.
+     */
+    @Column(name = "criterion_index", nullable = false)
+    private Integer criterionIndex;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

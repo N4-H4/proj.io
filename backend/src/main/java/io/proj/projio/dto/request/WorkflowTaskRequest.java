@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
  * Request payload for WorkflowTask create (POST) and partial update (PATCH).
  *
  * <h3>POST /api/v1/workflow-tasks</h3>
- * Required: {@code phaseId}, {@code title}.
+ * Required: {@code phaseId}, {@code title}, {@code criterionIndex}.
  * Optional: {@code description} (AI-reserved), {@code status} (defaults to {@code TODO}).
  *
  * <h3>PATCH /api/v1/workflow-tasks/{id}</h3>
@@ -50,4 +50,17 @@ public class WorkflowTaskRequest {
      * If both {@code status} and {@code completed} are provided, {@code status} takes precedence.
      */
     private Boolean completed;
+
+    /**
+     * Index of the acceptance criterion this task belongs to.
+     * Required on POST. Accepted values:
+     * <ul>
+     *   <li>{@code -1} — the virtual "General" criterion (informational housekeeping;
+     *       never prevents phase completion)</li>
+     *   <li>Any valid 0-based index into the parent phase's
+     *       {@code completionCriteria} newline-split list</li>
+     * </ul>
+     * The backend returns HTTP 400 if this is null or outside the accepted range.
+     */
+    private Integer criterionIndex;
 }

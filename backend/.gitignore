@@ -52,4 +52,6 @@ yarn-error.log*
 .DS_Store
 Thumbs.db
 
+
 src/main/resources/application-local.yml
+*.zip
